@@ -4,5 +4,9 @@
 
 void fill(framebuffer *fb, uint32_t color);
 
-void line2d(framebuffer *fb, vec2i A, vec2i B, uint32_t color);
+void drawLine2d(framebuffer *fb, vec2i A, vec2i B, uint32_t color);
+
+void drawTri2d(framebuffer *fb, tri2 tri, uint32_t color);
+
+void triangle_fill(framebuffer *fb, tri2 tri, uint32_t color);
 #endif

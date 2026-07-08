@@ -6,6 +6,8 @@ can draw lines and shi on a framebuffer!
 
 ![](image.png)
 
+(Enjoy the ugliest render of your life :3).
+
 2 python scripts included for converting the output `.ppm` to a more human `.png` and to delete output images.
 
 ## Build
@@ -24,8 +26,10 @@ duh
 
 Ts (this) generates an `image.ppm`.
 Convert it to a PNG using the script provided.
+
 > [!TIP]
 > Directly use ts if you don't hate yourself.
+>
 > ```sh
 > make && ./bin/raster && py conv.py
 > ```
