@@ -24,3 +24,8 @@ duh
 
 Ts (this) generates an `image.ppm`.
 Convert it to a PNG using the script provided.
+> [!TIP]
+> Directly use ts if you don't hate yourself.
+> ```sh
+> make && ./bin/raster && py conv.py
+> ```

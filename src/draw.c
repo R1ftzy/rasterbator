@@ -9,7 +9,7 @@ void fill(framebuffer *fb, uint32_t color)
   }
 }
 
-void line2d(framebuffer *fb, vec2 A, vec2 B, uint32_t color)
+void line2d(framebuffer *fb, vec2i A, vec2i B, uint32_t color)
 {
   int x0, x1, y0, y1;
   x0 = B.x;
