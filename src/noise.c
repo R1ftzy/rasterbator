@@ -76,7 +76,7 @@ void fractal_fill(framebuffer *fb, uint32_t tint)
       uint8_t r = (tint_r * v) / 255;
       uint8_t g = (tint_g * v) / 255;
       uint8_t b = (tint_b * v) / 255;
-      set_pixel(fb, x, y, RGBA(r, g, b, 255));
+      set_pixel(fb, x, y, RGBA(r, g, b, 255), 1.0f);
     }
   }
 }

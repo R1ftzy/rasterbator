@@ -26,7 +26,7 @@ void drawLine2d(framebuffer *fb, vec2i A, vec2i B, uint32_t color)
   int error = dx + dy;
   while (1)
   {
-    set_pixel(fb, x0, y0, color);
+    set_pixel(fb, x0, y0, color, 0.0f);
     int e2 = 2 * error;
     if (e2 >= dy)
     {
@@ -103,7 +103,7 @@ void triangle_fill(framebuffer *fb, tri2 tri, uint32_t color)
       bool is_inside = w0 >= 0 && w1 >= 0 && w2 >= 0;
       if (is_inside)
       {
-        set_pixel(fb, x, y, color);
+        set_pixel(fb, x, y, color, 0.0f);
       }
       w0 += delta_w0_col;
       w1 += delta_w1_col;

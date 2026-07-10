@@ -1,19 +1,34 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "types.h"
 
-
-void set_pixel(framebuffer *fb, int x, int y, uint32_t color)
+void set_pixel(framebuffer *fb, int x, int y, uint32_t color, float depth)
 {
-  fb->pixels[x + y * fb->width] = color;
+  if (x >= 0 && x < fb->width && y >= 0 && y < fb->height)
+  {
+    if (depth <= fb->depth[x + y * fb->width])
+    {
+      fb->pixels[x + y * fb->width] = color;
+      fb->depth[x + y * fb->width] = depth;
+    }
+  }
 }
-
+void clear_depth(framebuffer *fb){
+  for (size_t i = 0; i < fb->width * fb->height; i++)
+  {
+    fb->depth[i] = 1.0f;
+  }
+}
 void init(framebuffer *fb)
 {
   fb->width = 1280;
   fb->height = 720;
   fb->pixels = malloc(fb->width * fb->height * sizeof(uint32_t));
+  memset(fb->pixels, 0, fb->width * fb->height * sizeof(uint32_t));
+  fb->depth = malloc(fb->width * fb->height * sizeof(float));
+  clear_depth(fb);
 }
 
 void render(framebuffer *fb)

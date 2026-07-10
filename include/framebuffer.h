@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include "types.h"
 
-void set_pixel(framebuffer *fb, int x, int y, uint32_t color);
+void set_pixel(framebuffer *fb, int x, int y, uint32_t color, float depth);
 
 void init(framebuffer *fb);
 
