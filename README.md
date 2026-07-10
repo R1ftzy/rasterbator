@@ -2,11 +2,11 @@
 
 Very primitive software rasterizer in C.
 
-can draw lines and shi on a framebuffer!
+can draw 3D shi onto a 2D screen!
 
 ![](image.png)
 
-(Enjoy the ugliest render of your life :3).
+(Enjoy the ugliest render (EPIC 3D tetrahedron) of your life :3).
 
 2 python scripts included for converting the output `.ppm` to a more human `.png` and to delete output images.
 

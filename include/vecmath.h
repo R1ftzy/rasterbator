@@ -1,6 +1,7 @@
 #ifndef VECMATH_H
 #define VECMATH_H
 #include "types.h"
+#define VEC3_TO_VEC4(v) ((vec4){(v).x, (v).y, (v).z, 1.0f})
 
 vec3 vec3Add(vec3 A, vec3 B);
 

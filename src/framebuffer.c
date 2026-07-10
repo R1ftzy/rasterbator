@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "types.h"
+#include "config.h"
 
 void set_pixel(framebuffer *fb, int x, int y, uint32_t color, float depth)
 {
@@ -23,8 +24,8 @@ void clear_depth(framebuffer *fb){
 }
 void init(framebuffer *fb)
 {
-  fb->width = 1280;
-  fb->height = 720;
+  fb->width = SCREEN_WIDTH;
+  fb->height = SCREEN_HEIGHT;
   fb->pixels = malloc(fb->width * fb->height * sizeof(uint32_t));
   memset(fb->pixels, 0, fb->width * fb->height * sizeof(uint32_t));
   fb->depth = malloc(fb->width * fb->height * sizeof(float));
