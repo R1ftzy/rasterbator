@@ -59,6 +59,19 @@ void blue_shit(framebuffer *fb, mesh2 mesh)
   drawTri2d(fb, mesh.tris[2], BLACK);
   fillTri2d(fb, mesh.tris[2], RGB(0, 59, 180));
 }
+  //   tri3 base[] = {
+  //       {{{-5.0f, -1.8f, 3.0f}, {-5.0f, -1.8f, 8.0f}, {5.0f, -1.8f, 3.0f}}},
+  //       {{{-5.0f, -1.8f, 8.0f}, {5.0f, -1.8f, 8.0f}, {5.0f, -1.8f, 3.0f}}}};
+  //   fillTri3d(&fb, &camera, base[0], HSV(220, 0.4f, 0.6f));
+  //   fillTri3d(&fb, &camera, base[1], HSV(220, 0.4f, 0.6f));
+
+  //   tri3 tris[] = {
+  //       {{{3.0f, -1.8f, 5.0f}, {0.0f, 1.8f, 4.25f}, {-3.0f, -1.8f, 5.0f}}},
+  //       {{{-0.5f, -1.8f, 3.5f}, {0.0f, 1.8f, 4.25f}, {3.0f, -1.8f, 5.0f}}},
+  //       {{{-3.0f, -1.8f, 5.0f}, {0.0f, 1.8f, 4.25f}, {-0.5f, -1.8f, 3.5f}}},
+  //       {{{-0.5f, -1.8f, 3.5f}, {3.0f, -1.8f, 5.0f}, {-3.0f, -1.8f, 5.0f}}}};
+  //   mesh3 tetrahedron = {.tris = tris};
+  //   epic_3D_shit(&fb, &camera, tetrahedron, light);
 
 void epic_3D_shit(framebuffer *fb, camera *camera, mesh3 mesh, vec3 light)
 {

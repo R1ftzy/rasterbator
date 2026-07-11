@@ -14,6 +14,6 @@ void drawTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color);
 
 void fillTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color);
 
-void drawMesh3d(framebuffer *fb, camera *cam, mesh3 mesh, vec3 light);
+void drawMesh3d(framebuffer *fb, camera *cam, mesh3 mesh, vec3 light, uint32_t color);
 
 #endif

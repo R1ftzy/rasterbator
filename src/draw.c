@@ -283,7 +283,7 @@ void fillTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
   }
 }
 
-void drawMesh3d(framebuffer *fb, camera *cam, mesh3 mesh, vec3 light)
+void drawMesh3d(framebuffer *fb, camera *cam, mesh3 mesh, vec3 light, uint32_t color)
 {
   for (size_t i = 0; i < mesh.count; i++)
   {
@@ -298,6 +298,9 @@ void drawMesh3d(framebuffer *fb, camera *cam, mesh3 mesh, vec3 light)
     printf("light %f\n", intensity);
     intensity = (intensity < 0) ? 0.0f : intensity;
     printf("light %f\n", intensity);
-    fillTri3d(fb, cam, mesh.tris[i], HSV(0.0f, 0.0f, 1.0f * intensity));
+    uint8_t red = (color >> 16) & 0xFF;
+    uint8_t green = (color >> 8) & 0xFF;
+    uint8_t blue = color & 0xFF;
+    fillTri3d(fb, cam, mesh.tris[i], RGB(red * intensity, green * intensity, blue * intensity));
   }
 }
