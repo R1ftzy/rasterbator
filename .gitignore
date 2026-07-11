@@ -1,3 +1,5 @@
 /bin
 *.ppm
 old
+*.png
+!assets/*.png

@@ -4,7 +4,8 @@ Very primitive software rasterizer in C.
 
 can draw 3D shi onto a 2D screen!
 
-![](image.png)
+![render](assets/image.png)
+![depth](assets/depth.png)
 
 (Enjoy the ugliest render (EPIC 3D tetrahedron) of your life :3).
 

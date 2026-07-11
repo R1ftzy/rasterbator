@@ -6,9 +6,9 @@
 
 void initCam(camera *cam)
 {
-  cam->near = 0.1f;
-  cam->far = 1000.0f;
-  cam->fov = 90.0f;
+  cam->near = FNEAR;
+  cam->far = FFAR;
+  cam->fov = FFOV;
   cam->aspect = (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT;
 }
 

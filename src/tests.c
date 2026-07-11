@@ -53,9 +53,7 @@ void blue_shit(framebuffer *fb, mesh2 mesh)
 }
 
 void epic_3D_shit(framebuffer *fb, camera *camera, mesh3 mesh){
-  fillTri3d(fb, camera, mesh.tris[0], HSV(42, 0.49f, 0.67f));
-  fillTri3d(fb, camera, mesh.tris[1], HSV(30, 0.60f, 0.420f));
-  drawTri3d(fb, camera, mesh.tris[2], BLACK);
-  fillTri3d(fb, camera, mesh.tris[3], HSV(26, 0.70f, 0.37f));
-  drawTri3d(fb, camera, mesh.tris[3], BLACK);
+  fillTri3d(fb, camera, mesh.tris[0], HSV(0, 0.49f, 0.67f));
+  fillTri3d(fb, camera, mesh.tris[1], HSV(90, 0.60f, 0.67f));
+  fillTri3d(fb, camera, mesh.tris[3], HSV(210, 0.70f, 0.67f));
 }

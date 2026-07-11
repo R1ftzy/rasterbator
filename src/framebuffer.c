@@ -46,3 +46,17 @@ void render(framebuffer *fb)
   }
   fclose(fp);
 }
+
+void render_depth(framebuffer *fb)
+{
+  FILE *fp = fopen("depth.ppm", "wb");
+  fprintf(fp, "P6\n%d %d\n255\n", fb->width, fb->height);
+  for (size_t i = 0; i < fb->height * fb->width; i++)
+  {
+    float linearDepth = (2.0 * FNEAR * FFAR) / (FFAR + FNEAR - fb->depth[i] * (FFAR - FNEAR));
+    uint8_t depth = (linearDepth/40) * 255;
+    uint8_t buffer[3] = {depth, depth, depth};
+    fwrite(buffer, sizeof(uint8_t), 3, fp);
+  }
+  fclose(fp);
+}

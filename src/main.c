@@ -29,7 +29,12 @@ int main()
   //     .tris = tris,
   //     .count = sizeof(tris) / sizeof(tris[0])};
   // green_shit(&fb, mesh);
-  
+  tri3 base[] = {
+      {{{-5.0f, -1.8f, 3.0f}, {-5.0f, -1.8f, 8.0f}, {5.0f, -1.8f, 3.0f}}},
+      {{{-5.0f, -1.8f, 8.0f}, {5.0f, -1.8f, 8.0f}, {5.0f, -1.8f, 3.0f}}}};
+  fillTri3d(&fb, &camera, base[0], HSV(220, 0.4f, 0.6f));
+  fillTri3d(&fb, &camera, base[1], HSV(220, 0.4f, 0.6f));
+
   tri3 tris[] = {
       {{{-3.0f, -1.8f, 5.0f}, {0.0f, 1.8f, 4.25f}, {3.0f, -1.8f, 5.0f}}},
       {{{-0.5f, -1.8f, 3.5f}, {0.0f, 1.8f, 4.25f}, {3.0f, -1.8f, 5.0f}}},
@@ -37,5 +42,7 @@ int main()
       {{{-3.0f, -1.8f, 5.0f}, {3.0f, -1.8f, 5.0f}, {-0.5f, -1.8f, 3.5f}}}};
   mesh3 tetrahedron = {.tris = tris};
   epic_3D_shit(&fb, &camera, tetrahedron);
+
   render(&fb);
+  render_depth(&fb);
 }

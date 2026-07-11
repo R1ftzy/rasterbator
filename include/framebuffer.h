@@ -10,4 +10,5 @@ void init(framebuffer *fb);
 
 void render(framebuffer *fb);
 
+void render_depth(framebuffer *fb);
 #endif
