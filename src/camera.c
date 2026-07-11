@@ -6,6 +6,7 @@
 
 void initCam(camera *cam)
 {
+  cam->position = (vec3){0, 0, 0};
   cam->near = FNEAR;
   cam->far = FFAR;
   cam->fov = FFOV;

@@ -4,6 +4,8 @@
 #include "vecmath.h"
 #include "camera.h"
 #include "config.h"
+#include "types.h"
+#include "color.h"
 
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
@@ -198,6 +200,9 @@ void drawTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
 
 void fillTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
 {
+  printf("%f, %f, %f \n", tri.v[0].x, tri.v[0].y, tri.v[0].z);
+  printf("%f, %f, %f \n", tri.v[1].x, tri.v[1].y, tri.v[1].z);
+  printf("%f, %f, %f \n", tri.v[2].x, tri.v[2].y, tri.v[2].z);
   mat4 matProj = camProj(cam);
   vec4 v0 = VEC3_TO_VEC4(tri.v[0]);
   vec4 v1 = VEC3_TO_VEC4(tri.v[1]);
@@ -275,5 +280,24 @@ void fillTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
     w0_row += delta_w0_row;
     w1_row += delta_w1_row;
     w2_row += delta_w2_row;
+  }
+}
+
+void drawMesh3d(framebuffer *fb, camera *cam, mesh3 mesh, vec3 light)
+{
+  for (size_t i = 0; i < mesh.count; i++)
+  {
+    vec3 normal = vec3Normalize(vecCross(vec3Sub(mesh.tris[i].v[1], mesh.tris[i].v[0]), vec3Sub(mesh.tris[i].v[2], mesh.tris[i].v[0])));
+    vec3 los = vec3Sub(cam->position, mesh.tris[i].v[0]);
+    printf("normal: %.2f %.2f %.2f\n", normal.x, normal.y, normal.z);
+    if (vec3Dot(normal, los) <= 0)
+      continue;
+    vec3 face_centre = vec3Add(vec3Add(mesh.tris[i].v[0], mesh.tris[i].v[1]), mesh.tris[i].v[2]);
+    vec3 light_dir = vec3Sub(light, face_centre);
+    float intensity = vec3Dot(normal, vec3Normalize(light_dir));
+    printf("light %f\n", intensity);
+    intensity = (intensity < 0) ? 0.0f : intensity;
+    printf("light %f\n", intensity);
+    fillTri3d(fb, cam, mesh.tris[i], HSV(0.0f, 0.0f, 1.0f * intensity));
   }
 }
