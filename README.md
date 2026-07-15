@@ -7,7 +7,7 @@ can draw 3D shi onto a 2D screen!
 ![render](assets/image.png)
 ![depth](assets/depth.png)
 
-(Enjoy the ugliest render (EPIC 3D tetrahedron) of your life :3).
+rocket.
 
 2 python scripts included for converting the output `.ppm` to a more human `.png` and to delete output images.
 
