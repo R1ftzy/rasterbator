@@ -4,6 +4,8 @@
 #define VEC3_TO_VEC4(v) ((vec4){(v).x, (v).y, (v).z, 1.0f})
 #define DEG_TO_RAD(x) x * 3.14159f / 180.0f
 
+typedef vec4 quat;
+
 vec3 vec3Add(vec3 A, vec3 B);
 
 vec3 vec3Sub(vec3 A, vec3 B);

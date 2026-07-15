@@ -63,23 +63,10 @@ void moveMesh(mesh3 *mesh, float x_translate, float y_translate, float z_transla
   applyTransformation(mesh, matMove);
 }
 
-void rotateMesh(mesh3 *mesh, float attitude, float heading, float bank)
+void rotateMeshQuat(mesh3 *mesh, float w, float x, float y, float z)
 {
-
   vec3 centroid = getCentroid(mesh);
   moveMesh(mesh, -centroid.x, -centroid.y, -centroid.z);
-  float c1 = cosf(DEG_TO_RAD(heading) / 2);
-  float c2 = cosf(DEG_TO_RAD(bank) / 2);
-  float c3 = cosf(DEG_TO_RAD(attitude) / 2);
-  float s1 = sinf(DEG_TO_RAD(heading) / 2);
-  float s2 = sinf(DEG_TO_RAD(bank) / 2);
-  float s3 = sinf(DEG_TO_RAD(attitude) / 2);
-  float x, y, z, w;
-  w = c1 * c2 * c3 - s1 * s2 * s3;
-  x = c1 * c2 * s3 + s1 * s2 * c3;
-  y = s1 * c2 * c3 + c1 * s2 * s3;
-  z = c1 * s2 * c3 - s1 * c2 * s3;
-
   mat4 matRot = {0};
   matRot.m[0][0] = 1 - 2 * (y * y + z * z);
   matRot.m[0][1] = 2 * (x * y - w * z);
@@ -98,6 +85,28 @@ void rotateMesh(mesh3 *mesh, float attitude, float heading, float bank)
   moveMesh(mesh, centroid.x, centroid.y, centroid.z);
 }
 
+void rotateMeshEuler(mesh3 *mesh, float attitude, float heading, float bank)
+{
+  float c1 = cosf(DEG_TO_RAD(heading) / 2);
+  float c2 = cosf(DEG_TO_RAD(bank) / 2);
+  float c3 = cosf(DEG_TO_RAD(attitude) / 2);
+  float s1 = sinf(DEG_TO_RAD(heading) / 2);
+  float s2 = sinf(DEG_TO_RAD(bank) / 2);
+  float s3 = sinf(DEG_TO_RAD(attitude) / 2);
+  quat q;
+  q.w = c1 * c2 * c3 - s1 * s2 * s3;
+  q.x = c1 * c2 * s3 + s1 * s2 * c3;
+  q.y = s1 * c2 * c3 + c1 * s2 * s3;
+  q.z = c1 * s2 * c3 - s1 * c2 * s3;
+  rotateMeshQuat(mesh, q.w, q.x, q.y, q.z);
+}
+
 void scaleMesh(mesh3 *mesh, float x_scale, float y_scale, float z_scale)
 {
+  mat4 matScale = {0};
+  matScale.m[0][0] = x_scale;
+  matScale.m[1][1] = y_scale;
+  matScale.m[2][2] = z_scale;
+  matScale.m[3][3] = 1;
+  applyTransformation(mesh, matScale);
 }

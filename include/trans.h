@@ -4,7 +4,9 @@
 
 void moveMesh(mesh3 *mesh, float x_translate, float y_translate, float z_translate);
 
-void rotateMesh(mesh3 *mesh, float attitude, float heading, float bank);
+void rotateMeshEuler(mesh3 *mesh, float attitude, float heading, float bank);
+
+void rotateMeshQuat(mesh3 *mesh, float w, float x, float y, float z);
 
 void scaleMesh(mesh3 *mesh, float x_scale, float y_scale, float z_scale);
 

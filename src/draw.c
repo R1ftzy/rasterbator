@@ -216,6 +216,11 @@ void fillTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
   printf("%f %f %f\n", o1.x, o1.y, o1.w);
   printf("%f %f %f\n", o2.x, o2.y, o2.w);
 
+  if (o0.w < cam->near || o1.w < cam->near || o2.w < cam->near){
+    printf("\nToo close too cam\n");
+    return;
+  }
+
   o0.x /= o0.w;
   o0.y /= o0.w;
   o0.z /= o0.w;
