@@ -6,7 +6,7 @@ uint32_t RGBA(int r, int g, int b, int a)
   return argb;
 }
 
-uint32_t RGB(int r, int g, int b)
+uint32_t rgb(int r, int g, int b)
 {
   int a = 255;
   uint32_t argb = (a << 24) | (r << 16) | (g << 8) | b;
@@ -45,6 +45,6 @@ uint32_t HSV(float h, float s, float v)
     break;
   }
 
-  uint32_t color = RGB((int)(r * 255), (int)(g * 255), (int)(b * 255));
+  uint32_t color = rgb((int)(r * 255), (int)(g * 255), (int)(b * 255));
   return color;
 }

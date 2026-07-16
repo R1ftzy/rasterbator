@@ -52,12 +52,13 @@ typedef struct
   size_t count;
 } mesh3;
 
-typedef struct{
+typedef struct
+{
   vec3 position;
   vec3 direction;
   float fov;
-  float near;
-  float far;
+  float fnear;
+  float ffar;
   float aspect;
 } camera;
 

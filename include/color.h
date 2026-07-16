@@ -20,6 +20,6 @@
 
 
 uint32_t RGBA(int r, int g, int b, int a);
-uint32_t RGB(int r, int g, int b);
+uint32_t rgb(int r, int g, int b);
 uint32_t HSV(float h, float s, float v);
 #endif

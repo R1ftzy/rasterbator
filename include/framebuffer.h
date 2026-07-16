@@ -6,9 +6,13 @@
 
 void set_pixel(framebuffer *fb, int x, int y, uint32_t color, float depth);
 
+void clear_framebuffer(framebuffer *fb);
+
+void clear_depth(framebuffer *fb);
+
 void init(framebuffer *fb);
 
-void render(framebuffer *fb);
+void render_image(framebuffer *fb);
 
-void render_depth(framebuffer *fb);
+void render_image_depth(framebuffer *fb);
 #endif

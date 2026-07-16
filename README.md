@@ -1,15 +1,18 @@
 # Rasterbator (ik very funny)
 
-Very primitive software rasterizer in C.
+> [!IMPORTANT]
+> This build is Windows only. For the standalone graphics library, use the main branch.
 
-can draw 3D shi onto a 2D screen!
+Very primitive software rasterizer in C from scratch.
 
-![render](assets/image.png)
+can draw 3D shi onto a 2D screen in real time!
+
+![render](assets/sonic_demo.gif)
 ![depth](assets/depth.png)
 
-rocket.
+sonic.
 
-2 python scripts included for converting the output `.ppm` to a more human `.png` and to delete output images.
+2 python scripts included for converting `.ppm` outputs to a more human `.png` and to delete output images.
 
 ## Build
 
@@ -25,12 +28,6 @@ duh
 ./bin/raster
 ```
 
-Ts (this) generates an `image.ppm`.
-Convert it to a PNG using the script provided.
-
-> [!TIP]
-> Directly use ts if you don't hate yourself.
->
-> ```sh
-> make && ./bin/raster && py conv.py
-> ```
+Ts (this) opens a Win32 window with real-time rendering.
+Also generates an `image.ppm` frame on startup.
+Convert the PPM to PNG using the script provided.

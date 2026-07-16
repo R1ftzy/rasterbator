@@ -6,8 +6,8 @@
 void initCam(camera *cam)
 {
   cam->position = (vec3){0, 0, 0};
-  cam->near = FNEAR;
-  cam->far = FFAR;
+  cam->fnear = FNEAR;
+  cam->ffar = FFAR;
   cam->fov = FFOV;
   cam->aspect = (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT;
 }
@@ -19,8 +19,8 @@ mat4 camProj(camera *cam)
 
   matProj.m[0][0] = FovRad;
   matProj.m[1][1] = cam->aspect * FovRad;
-  matProj.m[2][2] = cam->far / (cam->far - cam->near);
-  matProj.m[2][3] = (-cam->far * cam->near) / (cam->far - cam->near);
+  matProj.m[2][2] = cam->ffar / (cam->ffar - cam->fnear);
+  matProj.m[2][3] = (-cam->ffar * cam->fnear) / (cam->ffar - cam->fnear);
   matProj.m[3][2] = 1.0f;
   matProj.m[3][3] = 0.0f;
 

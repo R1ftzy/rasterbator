@@ -216,7 +216,7 @@ void fillTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
   printf("%f %f %f\n", o1.x, o1.y, o1.w);
   printf("%f %f %f\n", o2.x, o2.y, o2.w);
 
-  if (o0.w < cam->near || o1.w < cam->near || o2.w < cam->near){
+  if (o0.w < cam->fnear || o1.w < cam->fnear || o2.w < cam->fnear){
     printf("\nToo close too cam\n");
     return;
   }
@@ -306,6 +306,6 @@ void drawMesh3d(framebuffer *fb, camera *cam, mesh3 mesh, vec3 light, uint32_t c
     uint8_t red = (color >> 16) & 0xFF;
     uint8_t green = (color >> 8) & 0xFF;
     uint8_t blue = color & 0xFF;
-    fillTri3d(fb, cam, mesh.tris[i], RGB(red * intensity, green * intensity, blue * intensity));
+    fillTri3d(fb, cam, mesh.tris[i], rgb(red * intensity, green * intensity, blue * intensity));
   }
 }

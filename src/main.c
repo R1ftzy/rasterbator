@@ -22,6 +22,6 @@ int main()
   initCam(&camera);
   vec3 light = {-1.0f, -1.0f, 2.0f};
   cock_n_balls(&fb, &camera, light);
-  render(&fb);
-  render_depth(&fb);
+  render_image(&fb);
+  render_image_depth(&fb);
 }

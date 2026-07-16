@@ -8,7 +8,7 @@
 
 void pink_shit(framebuffer *fb, mesh2 mesh)
 {
-  uint32_t tint = RGB(207, 159, 255);
+  uint32_t tint = rgb(207, 159, 255);
   init(fb);
   fractal_fill(fb, tint);
 
@@ -32,18 +32,18 @@ void pink_shit(framebuffer *fb, mesh2 mesh)
 // green_shit(&fb, mesh);
 void green_shit(framebuffer *fb, mesh2 mesh)
 {
-  uint32_t tint = RGB(67, 21, 19);
+  uint32_t tint = rgb(67, 21, 19);
   init(fb);
   fractal_fill(fb, tint);
 
   drawTri2d(fb, mesh.tris[0], BLACK);
-  fillTri2d(fb, mesh.tris[0], RGB(113, 106, 78));
+  fillTri2d(fb, mesh.tris[0], rgb(113, 106, 78));
 
   drawTri2d(fb, mesh.tris[1], BLACK);
-  fillTri2d(fb, mesh.tris[1], RGB(44, 68, 51));
+  fillTri2d(fb, mesh.tris[1], rgb(44, 68, 51));
 
   drawTri2d(fb, mesh.tris[2], BLACK);
-  fillTri2d(fb, mesh.tris[2], RGB(28, 59, 51));
+  fillTri2d(fb, mesh.tris[2], rgb(28, 59, 51));
 }
 
 void blue_shit(framebuffer *fb, mesh2 mesh)
@@ -53,13 +53,13 @@ void blue_shit(framebuffer *fb, mesh2 mesh)
   fractal_fill(fb, tint);
 
   drawTri2d(fb, mesh.tris[0], BLACK);
-  fillTri2d(fb, mesh.tris[0], RGB(0, 100, 200));
+  fillTri2d(fb, mesh.tris[0], rgb(0, 100, 200));
 
   drawTri2d(fb, mesh.tris[1], BLACK);
-  fillTri2d(fb, mesh.tris[1], RGB(44, 68, 255));
+  fillTri2d(fb, mesh.tris[1], rgb(44, 68, 255));
 
   drawTri2d(fb, mesh.tris[2], BLACK);
-  fillTri2d(fb, mesh.tris[2], RGB(0, 59, 180));
+  fillTri2d(fb, mesh.tris[2], rgb(0, 59, 180));
 }
 //   tri3 base[] = {
 //       {{{-5.0f, -1.8f, 3.0f}, {-5.0f, -1.8f, 8.0f}, {5.0f, -1.8f, 3.0f}}},

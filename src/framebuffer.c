@@ -23,6 +23,14 @@ void clear_depth(framebuffer *fb)
     fb->depth[i] = 1.0f;
   }
 }
+void clear_framebuffer(framebuffer *fb)
+{
+  for (size_t i = 0; i < fb->width * fb->height; i++)
+  {
+    fb->pixels[i] = 0;
+  }
+  clear_depth(fb);
+}
 void init(framebuffer *fb)
 {
   fb->width = SCREEN_WIDTH;
@@ -33,7 +41,7 @@ void init(framebuffer *fb)
   clear_depth(fb);
 }
 
-void render(framebuffer *fb)
+void render_image(framebuffer *fb)
 {
   FILE *fp = fopen("image.ppm", "wb");
   fprintf(fp, "P6\n%d %d\n255\n", fb->width, fb->height);
@@ -48,7 +56,7 @@ void render(framebuffer *fb)
   fclose(fp);
 }
 
-void render_depth(framebuffer *fb)
+void render_image_depth(framebuffer *fb)
 {
   FILE *fp = fopen("depth.ppm", "wb");
   fprintf(fp, "P6\n%d %d\n255\n", fb->width, fb->height);
