@@ -17,6 +17,8 @@
 
 framebuffer fb;
 camera cam;
+BITMAPINFO bmi = {0};
+
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
@@ -65,7 +67,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     {
         return 0;
     }
-    BITMAPINFO bmi = {0};
     bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
     bmi.bmiHeader.biWidth = fb.width;
     bmi.bmiHeader.biHeight = -fb.height;
@@ -110,14 +111,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
         // drawMesh3d(&fb, &cam, ball_blue, light, BLUE);
 
-        HDC hdc = GetDC(hwnd);
-        StretchDIBits(
-            hdc,
-            0, 0, fb.width, fb.height,
-            0, 0, fb.width, fb.height,
-            fb.pixels, &bmi,
-            DIB_RGB_COLORS, SRCCOPY);
-        ReleaseDC(hwnd, hdc);
+        InvalidateRect(hwnd, NULL, FALSE);
+
         // Evaluate Delta Time
         {
             QueryPerformanceCounter(&currentTickCount);
@@ -135,7 +130,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
         }
 
         // Checking Framerate
-        if(frame_count % 30 == 0)
+        if (frame_count % 30 == 0)
         {
             wchar_t title[64];
             swprintf(title, 64, L"rasterbator | %.0f fps", 1.0f / dt);
@@ -148,14 +143,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    BITMAPINFO bmi = {0};
-    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-    bmi.bmiHeader.biWidth = fb.width;
-    bmi.bmiHeader.biHeight = -fb.height;
-    bmi.bmiHeader.biPlanes = 1;
-    bmi.bmiHeader.biBitCount = 32;
-    bmi.bmiHeader.biCompression = BI_RGB;
-
     switch (uMsg)
     {
     case WM_DESTROY:
