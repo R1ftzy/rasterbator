@@ -283,11 +283,8 @@ void drawMesh3d(framebuffer *fb, camera *cam, mesh3 mesh, vec3 light, uint32_t c
     vec3 los = vec3Sub(cam->position, mesh.tris[i].v[0]);
     if (vec3Dot(normal, los) <= 0)
       continue;
-      
+
     vec3 face_centre = vec3Add(vec3Add(mesh.tris[i].v[0], mesh.tris[i].v[1]), mesh.tris[i].v[2]);
-    face_centre.x /= 3.0f;
-    face_centre.y /= 3.0f;
-    face_centre.z /= 3.0f;
     vec3 light_dir = vec3Sub(light, face_centre);
 
     float intensity = vec3Dot(normal, vec3Normalize(light_dir));

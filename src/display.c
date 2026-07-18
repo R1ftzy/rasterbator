@@ -5,7 +5,6 @@
 #include <math.h>
 #include "types.h"
 #include "framebuffer.h"
-#include "noise.h"
 #include "draw.h"
 #include "color.h"
 #include "vecmath.h"
@@ -131,7 +130,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
           DIB_RGB_COLORS, SRCCOPY);
       ReleaseDC(hwnd, hdc);
     }
-    
+
     // Evaluate Delta Time
     {
       QueryPerformanceCounter(&currentTickCount);
