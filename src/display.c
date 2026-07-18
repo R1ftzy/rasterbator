@@ -15,8 +15,6 @@
 #include "obj.h"
 #include "trans.h"
 
-#define SCREEN_WIDTH 1280
-#define SCREEN_HEIGHT 720
 framebuffer fb;
 camera cam;
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -52,7 +50,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
     RegisterClass(&wc);
 
-
     RECT rect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
     AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
 
@@ -81,6 +78,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     int running = 1;
     float t = 0.0f;
 
+    LARGE_INTEGER ticksPerSecond, lastTickCount, currentTickCount;
+    QueryPerformanceFrequency(&ticksPerSecond);
+    QueryPerformanceCounter(&lastTickCount);
+    float dt = 0;
+
     while (running)
     {
         MSG msg;
@@ -91,13 +93,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
-        t += 0.02f;
+        t += 2 * dt;
         float r = 3.0f;
         clear_framebuffer(&fb);
         light = (vec3){r * cosf(t), -1.0f, r * (sinf(t) + 3)};
 
         fill(&fb, rgb(183, 183, 183));
-
+        // rotateMeshEuler(&sonic, 0,  60 * dt, 0);
         drawMesh3d(&fb, &cam, base, light, rgb(140, 183, 76));
         drawMesh3d(&fb, &cam, sonic, light, rgb(89, 135, 199));
         // drawMesh3d(&fb, &cam, tip, light, GREEN);
@@ -116,6 +118,21 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             fb.pixels, &bmi,
             DIB_RGB_COLORS, SRCCOPY);
         ReleaseDC(hwnd, hdc);
+        // Evaluate Delta Time 
+        {
+            QueryPerformanceCounter(&currentTickCount);
+            uint64_t elapsedTicks = currentTickCount.QuadPart - lastTickCount.QuadPart;
+            // Convert to microseconds to not lose precision
+            uint64_t elapsedTimeInMicroseconds = (elapsedTicks * 1000000) / ticksPerSecond.QuadPart;
+            
+            lastTickCount = currentTickCount;
+
+            // Time in milliseconds
+            dt = (float)elapsedTimeInMicroseconds / 1000.0f;
+
+            // Time in seconds
+            dt /= 1000.0f;
+        }
     }
     return 0;
 }
