@@ -31,7 +31,7 @@ void clear_framebuffer(framebuffer *fb, uint32_t color)
   }
   clear_depth(fb);
 }
-void init(framebuffer *fb)
+void init_framebuffer(framebuffer *fb)
 {
   fb->width = SCREEN_WIDTH;
   fb->height = SCREEN_HEIGHT;

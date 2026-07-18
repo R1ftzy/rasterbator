@@ -10,7 +10,7 @@ void clear_framebuffer(framebuffer *fb, uint32_t color);
 
 void clear_depth(framebuffer *fb);
 
-void init(framebuffer *fb);
+void init_framebuffer(framebuffer *fb);
 
 void render_image(framebuffer *fb);
 

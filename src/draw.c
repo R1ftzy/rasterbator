@@ -186,7 +186,7 @@ void drawTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
   vec2i vi0 = {(int)((o0.x + 1.0f) * 0.5f * SCREEN_WIDTH), (int)((1.0f - o0.y) * 0.5f * SCREEN_HEIGHT)};
   vec2i vi1 = {(int)((o1.x + 1.0f) * 0.5f * SCREEN_WIDTH), (int)((1.0f - o1.y) * 0.5f * SCREEN_HEIGHT)};
   vec2i vi2 = {(int)((o2.x + 1.0f) * 0.5f * SCREEN_WIDTH), (int)((1.0f - o2.y) * 0.5f * SCREEN_HEIGHT)};
-  
+
   drawLine3d(fb, vi0, vi1, color, o0.z, o1.z);
   drawLine3d(fb, vi1, vi2, color, o1.z, o2.z);
   drawLine3d(fb, vi2, vi0, color, o2.z, o0.z);
@@ -203,8 +203,8 @@ void fillTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
   vec4 o1 = mat4MulVec4(matProj, v1);
   vec4 o2 = mat4MulVec4(matProj, v2);
 
-
-  if (o0.w < cam->fnear || o1.w < cam->fnear || o2.w < cam->fnear){
+  if (o0.w < cam->fnear || o1.w < cam->fnear || o2.w < cam->fnear)
+  {
     return;
   }
 
@@ -274,21 +274,24 @@ void fillTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
 
 void drawMesh3d(framebuffer *fb, camera *cam, mesh3 mesh, vec3 light, uint32_t color)
 {
+  uint8_t red = (color >> 16) & 0xFF;
+  uint8_t green = (color >> 8) & 0xFF;
+  uint8_t blue = color & 0xFF;
   for (size_t i = 0; i < mesh.count; i++)
   {
     vec3 normal = vec3Normalize(vecCross(vec3Sub(mesh.tris[i].v[1], mesh.tris[i].v[0]), vec3Sub(mesh.tris[i].v[2], mesh.tris[i].v[0])));
     vec3 los = vec3Sub(cam->position, mesh.tris[i].v[0]);
     if (vec3Dot(normal, los) <= 0)
       continue;
+      
     vec3 face_centre = vec3Add(vec3Add(mesh.tris[i].v[0], mesh.tris[i].v[1]), mesh.tris[i].v[2]);
+    face_centre.x /= 3.0f;
+    face_centre.y /= 3.0f;
+    face_centre.z /= 3.0f;
     vec3 light_dir = vec3Sub(light, face_centre);
 
     float intensity = vec3Dot(normal, vec3Normalize(light_dir));
     intensity = (intensity < 0) ? 0.0f : intensity;
-
-    uint8_t red = (color >> 16) & 0xFF;
-    uint8_t green = (color >> 8) & 0xFF;
-    uint8_t blue = color & 0xFF;
     fillTri3d(fb, cam, mesh.tris[i], rgb(red * intensity, green * intensity, blue * intensity));
   }
 }
