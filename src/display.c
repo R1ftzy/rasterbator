@@ -82,7 +82,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     QueryPerformanceFrequency(&ticksPerSecond);
     QueryPerformanceCounter(&lastTickCount);
     float dt = 0;
-
+    int frame_count = 0;
     while (running)
     {
         MSG msg;
@@ -95,10 +95,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
         }
         t += 2 * dt;
         float r = 3.0f;
-        clear_framebuffer(&fb);
         light = (vec3){r * cosf(t), -1.0f, r * (sinf(t) + 3)};
 
-        fill(&fb, rgb(183, 183, 183));
+        clear_framebuffer(&fb, rgb(183, 183, 183));
+
         // rotateMeshEuler(&sonic, 0,  60 * dt, 0);
         drawMesh3d(&fb, &cam, base, light, rgb(140, 183, 76));
         drawMesh3d(&fb, &cam, sonic, light, rgb(89, 135, 199));
@@ -118,13 +118,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             fb.pixels, &bmi,
             DIB_RGB_COLORS, SRCCOPY);
         ReleaseDC(hwnd, hdc);
-        // Evaluate Delta Time 
+        // Evaluate Delta Time
         {
             QueryPerformanceCounter(&currentTickCount);
             uint64_t elapsedTicks = currentTickCount.QuadPart - lastTickCount.QuadPart;
             // Convert to microseconds to not lose precision
             uint64_t elapsedTimeInMicroseconds = (elapsedTicks * 1000000) / ticksPerSecond.QuadPart;
-            
+
             lastTickCount = currentTickCount;
 
             // Time in milliseconds
@@ -133,6 +133,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             // Time in seconds
             dt /= 1000.0f;
         }
+
+        // Checking Framerate
+        if(frame_count % 30 == 0)
+        {
+            wchar_t title[64];
+            swprintf(title, 64, L"rasterbator | %.0f fps", 1.0f / dt);
+            SetWindowTextW(hwnd, title);
+        }
+        frame_count++;
     }
     return 0;
 }

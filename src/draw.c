@@ -171,10 +171,6 @@ void drawTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
   vec4 o1 = mat4MulVec4(matProj, v1);
   vec4 o2 = mat4MulVec4(matProj, v2);
 
-  printf("%f %f %f\n", o0.x, o0.y, o0.w);
-  printf("%f %f %f\n", o1.x, o1.y, o1.w);
-  printf("%f %f %f\n", o2.x, o2.y, o2.w);
-
   o0.x /= o0.w;
   o0.y /= o0.w;
   o0.z /= o0.w;
@@ -190,9 +186,7 @@ void drawTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
   vec2i vi0 = {(int)((o0.x + 1.0f) * 0.5f * SCREEN_WIDTH), (int)((1.0f - o0.y) * 0.5f * SCREEN_HEIGHT)};
   vec2i vi1 = {(int)((o1.x + 1.0f) * 0.5f * SCREEN_WIDTH), (int)((1.0f - o1.y) * 0.5f * SCREEN_HEIGHT)};
   vec2i vi2 = {(int)((o2.x + 1.0f) * 0.5f * SCREEN_WIDTH), (int)((1.0f - o2.y) * 0.5f * SCREEN_HEIGHT)};
-  printf("%d %d\n", vi0.x, vi0.y);
-  printf("%d %d\n", vi1.x, vi1.y);
-  printf("%d %d\n", vi2.x, vi2.y);
+  
   drawLine3d(fb, vi0, vi1, color, o0.z, o1.z);
   drawLine3d(fb, vi1, vi2, color, o1.z, o2.z);
   drawLine3d(fb, vi2, vi0, color, o2.z, o0.z);
@@ -200,9 +194,6 @@ void drawTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
 
 void fillTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
 {
-  printf("%f, %f, %f \n", tri.v[0].x, tri.v[0].y, tri.v[0].z);
-  printf("%f, %f, %f \n", tri.v[1].x, tri.v[1].y, tri.v[1].z);
-  printf("%f, %f, %f \n", tri.v[2].x, tri.v[2].y, tri.v[2].z);
   mat4 matProj = camProj(cam);
   vec4 v0 = VEC3_TO_VEC4(tri.v[0]);
   vec4 v1 = VEC3_TO_VEC4(tri.v[1]);
@@ -212,12 +203,8 @@ void fillTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
   vec4 o1 = mat4MulVec4(matProj, v1);
   vec4 o2 = mat4MulVec4(matProj, v2);
 
-  printf("%f %f %f\n", o0.x, o0.y, o0.w);
-  printf("%f %f %f\n", o1.x, o1.y, o1.w);
-  printf("%f %f %f\n", o2.x, o2.y, o2.w);
 
   if (o0.w < cam->fnear || o1.w < cam->fnear || o2.w < cam->fnear){
-    printf("\nToo close too cam\n");
     return;
   }
 
@@ -236,9 +223,6 @@ void fillTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
   vec2i vi0 = {(int)((o0.x + 1.0f) * 0.5f * SCREEN_WIDTH), (int)((1.0f - o0.y) * 0.5f * SCREEN_HEIGHT)};
   vec2i vi1 = {(int)((o1.x + 1.0f) * 0.5f * SCREEN_WIDTH), (int)((1.0f - o1.y) * 0.5f * SCREEN_HEIGHT)};
   vec2i vi2 = {(int)((o2.x + 1.0f) * 0.5f * SCREEN_WIDTH), (int)((1.0f - o2.y) * 0.5f * SCREEN_HEIGHT)};
-  printf("%d %d\n", vi0.x, vi0.y);
-  printf("%d %d\n", vi1.x, vi1.y);
-  printf("%d %d\n", vi2.x, vi2.y);
   tri2 tri2d = {vi0, vi1, vi2};
 
   // Finds the bounding box with all candidate pixels
@@ -294,15 +278,14 @@ void drawMesh3d(framebuffer *fb, camera *cam, mesh3 mesh, vec3 light, uint32_t c
   {
     vec3 normal = vec3Normalize(vecCross(vec3Sub(mesh.tris[i].v[1], mesh.tris[i].v[0]), vec3Sub(mesh.tris[i].v[2], mesh.tris[i].v[0])));
     vec3 los = vec3Sub(cam->position, mesh.tris[i].v[0]);
-    printf("normal: %.2f %.2f %.2f\n", normal.x, normal.y, normal.z);
     if (vec3Dot(normal, los) <= 0)
       continue;
     vec3 face_centre = vec3Add(vec3Add(mesh.tris[i].v[0], mesh.tris[i].v[1]), mesh.tris[i].v[2]);
     vec3 light_dir = vec3Sub(light, face_centre);
+
     float intensity = vec3Dot(normal, vec3Normalize(light_dir));
-    printf("light %f\n", intensity);
     intensity = (intensity < 0) ? 0.0f : intensity;
-    printf("light %f\n", intensity);
+
     uint8_t red = (color >> 16) & 0xFF;
     uint8_t green = (color >> 8) & 0xFF;
     uint8_t blue = color & 0xFF;

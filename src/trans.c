@@ -11,21 +11,9 @@ void applyTransformation(mesh3 *mesh, mat4 mat)
     vec4 v1 = VEC3_TO_VEC4(mesh->tris[i].v[1]);
     vec4 v2 = VEC3_TO_VEC4(mesh->tris[i].v[2]);
 
-    printf("\n\nBefore rot\n %f  %f  %f\n", v0.x, v0.y, v0.z);
-
-    printf("\n\nBefore rot\n %f  %f  %f\n", v1.x, v1.y, v1.z);
-
-    printf("\n\nBefore rot\n %f  %f  %f\n", v2.x, v2.y, v2.z);
-
     vec4 o0 = mat4MulVec4(mat, v0);
     vec4 o1 = mat4MulVec4(mat, v1);
     vec4 o2 = mat4MulVec4(mat, v2);
-
-    printf("\n\nAfter rot\n %f  %f  %f\n", o0.x, o0.y, o0.z);
-
-    printf("\n\nAfter rot\n %f  %f  %f\n", o1.x, o1.y, o1.z);
-
-    printf("\n\nAfter rot\n %f  %f  %f\n", o2.x, o2.y, o2.z);
 
     vec3 t0 = {o0.x, o0.y, o0.z};
     vec3 t1 = {o1.x, o1.y, o1.z};

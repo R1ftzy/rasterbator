@@ -23,11 +23,11 @@ void clear_depth(framebuffer *fb)
     fb->depth[i] = 1.0f;
   }
 }
-void clear_framebuffer(framebuffer *fb)
+void clear_framebuffer(framebuffer *fb, uint32_t color)
 {
   for (size_t i = 0; i < fb->width * fb->height; i++)
   {
-    fb->pixels[i] = 0;
+    fb->pixels[i] = color;
   }
   clear_depth(fb);
 }
