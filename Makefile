@@ -1,3 +1,19 @@
-raster: src/display.c src/framebuffer.c src/draw.c src/color.c src/vecmath.c src/camera.c src/obj.c src/trans.c
+CC       = gcc
+TARGET   = raster
+
+SRC      = src/display.c src/framebuffer.c src/draw.c src/color.c src/vecmath.c src/camera.c src/obj.c src/trans.c
+DEBUG_FLAGS  = -O0 -g -Wall -Wextra -Iinclude
+RELEASE_FLAGS = -O3 -Iinclude
+
+LDFLAGS = -mwindows -municode -lgdi32 -luser32
+
+all: release
+
+debug:
 	mkdir -p bin
-	gcc -Iinclude $^ -mwindows -municode -lgdi32 -luser32 -o bin/$@
+	$(CC) $(DEBUG_FLAGS) $(SRC) $(LDFLAGS) -o bin/$(TARGET)
+
+release:
+	mkdir -p bin
+	$(CC) $(RELEASE_FLAGS) $(SRC) $(LDFLAGS) -o bin/$(TARGET)
+

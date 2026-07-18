@@ -17,8 +17,12 @@ sonic.
 ```sh
 make
 ```
+Builds the optimized `-O3` version.
 
-duh
+```sh
+make debug
+```
+Builds with `-O0` and debug symbols.
 
 ## Usage
 
