@@ -18,14 +18,14 @@ void set_pixel(framebuffer *fb, int x, int y, uint32_t color, float depth)
 }
 void clear_depth(framebuffer *fb)
 {
-  for (size_t i = 0; i < fb->width * fb->height; i++)
+  for (int i = 0; i < fb->width * fb->height; i++)
   {
     fb->depth[i] = 1.0f;
   }
 }
 void clear_framebuffer(framebuffer *fb, uint32_t color)
 {
-  for (size_t i = 0; i < fb->width * fb->height; i++)
+  for (int i = 0; i < fb->width * fb->height; i++)
   {
     fb->pixels[i] = color;
   }
@@ -45,7 +45,7 @@ void render_image(framebuffer *fb)
 {
   FILE *fp = fopen("image.ppm", "wb");
   fprintf(fp, "P6\n%d %d\n255\n", fb->width, fb->height);
-  for (size_t i = 0; i < fb->height * fb->width; i++)
+  for (int i = 0; i < fb->height * fb->width; i++)
   {
     uint8_t red = (fb->pixels[i] >> 16) & 0xFF;
     uint8_t green = (fb->pixels[i] >> 8) & 0xFF;
@@ -60,7 +60,7 @@ void render_image_depth(framebuffer *fb)
 {
   FILE *fp = fopen("depth.ppm", "wb");
   fprintf(fp, "P6\n%d %d\n255\n", fb->width, fb->height);
-  for (size_t i = 0; i < fb->height * fb->width; i++)
+  for (int i = 0; i < fb->height * fb->width; i++)
   {
     float linearDepth = (2.0 * FNEAR * FFAR) / (FFAR + FNEAR - fb->depth[i] * (FFAR - FNEAR));
     uint8_t depth = (linearDepth / 20) * 255;
