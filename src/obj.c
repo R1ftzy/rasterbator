@@ -1,9 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "types.h"
+#include <string.h>
+
+#include <windows.h>
 
 void parse_obj(const char *filename, mesh3 *mesh)
 {
+  char path[MAX_PATH];
+  GetModuleFileNameA(NULL, path, MAX_PATH);
+  *strrchr(path, '\\') = '\0'; 
+  snprintf(path, MAX_PATH, "%s\\%s", path, filename);
   FILE *fp = fopen(filename, "r");
   size_t v_capacity = 0;
   size_t t_capacity = 0;
@@ -42,9 +49,6 @@ void parse_obj(const char *filename, mesh3 *mesh)
     }
   }
   mesh->count = t_count;
-  mesh->tris = malloc(mesh->count*sizeof(tri3));
-  for (size_t i = 0; i < mesh->count; i++)
-  {
-    mesh->tris[i] = tris[i];
-  }
+  mesh->tris = malloc(mesh->count * sizeof(tri3));
+  memcpy(mesh->tris, tris, mesh->count * sizeof(tri3));
 }
