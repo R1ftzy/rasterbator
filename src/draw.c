@@ -194,10 +194,15 @@ void RB_tri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
 
 void RB_fill_tri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
 {
+  // mat4 view = look_at_matrix(cam);
   mat4 matProj = cam_proj(cam);
   vec4 v0 = VEC3_TO_VEC4(tri.v[0]);
   vec4 v1 = VEC3_TO_VEC4(tri.v[1]);
   vec4 v2 = VEC3_TO_VEC4(tri.v[2]);
+
+  // vec4 l0 = mat4_mul_vec4(view, v0);
+  // vec4 l1 = mat4_mul_vec4(view, v1);
+  // vec4 l2 = mat4_mul_vec4(view, v2);
 
   vec4 o0 = mat4_mul_vec4(matProj, v0);
   vec4 o1 = mat4_mul_vec4(matProj, v1);
@@ -283,7 +288,7 @@ void RB_draw_mesh3d(framebuffer *fb, camera *cam, mesh3 mesh, vec3 light, uint32
   for (size_t i = 0; i < mesh.count; i++)
   {
     vec3 normal = vec3_normalize(vec3_cross(vec3_sub(mesh.tris[i].v[1], mesh.tris[i].v[0]), vec3_sub(mesh.tris[i].v[2], mesh.tris[i].v[0])));
-    vec3 los = vec3_sub(cam->position, mesh.tris[i].v[0]);
+    vec3 los = vec3_sub(cam->eye, mesh.tris[i].v[0]);
     if (vec3_dot(normal, los) <= 0)
       continue;
 

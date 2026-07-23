@@ -59,8 +59,9 @@ typedef struct
 
 typedef struct
 {
-  vec3 position;
-  vec3 direction;
+  vec3 eye;
+  vec3 target;
+  vec3 up;
   float fov;
   float fnear;
   float ffar;

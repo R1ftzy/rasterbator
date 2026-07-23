@@ -5,7 +5,9 @@
 
 void init_cam(camera *cam)
 {
-  cam->position = (vec3){0, 0, 0};
+  cam->eye = (vec3){0, 0, 0};
+  cam->up = (vec3){0, 1, 0};
+  cam->target = (vec3){0, 0, 1};
   cam->fnear = FNEAR;
   cam->ffar = FFAR;
   cam->fov = FFOV;
@@ -25,4 +27,39 @@ mat4 cam_proj(camera *cam)
   matProj.m[3][3] = 0.0f;
 
   return matProj;
+}
+
+mat4 look_at_matrix(camera *cam)
+{
+  vec3 forward = vec3_normalize(vec3_sub(cam->target, cam->eye));
+  vec3 right = vec3_normalize(vec3_cross(forward, cam->up));
+  vec3 up = vec3_cross(right, forward);
+
+  mat4 look = {0};
+
+  look.m[0][0] = right.x;
+  look.m[0][1] = right.y;
+  look.m[0][2] = right.z;
+
+  look.m[1][0] = up.x;
+  look.m[1][1] = up.y;
+  look.m[1][2] = up.z;
+
+  look.m[2][0] = forward.x;
+  look.m[2][1] = forward.y;
+  look.m[2][2] = forward.z;
+
+  look.m[3][3] = 1;
+
+  mat4 at = {0};
+
+  at.m[0][0] = 1;
+  at.m[1][1] = 1;
+  at.m[2][2] = 1;
+  at.m[3][3] = 1;
+  at.m[0][3] = - cam->eye.x;
+  at.m[1][3] = - cam->eye.y;
+  at.m[2][3] = - cam->eye.z;
+
+  return mat4_mul_mat4(look, at);
 }
