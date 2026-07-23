@@ -10,8 +10,9 @@ void parse_obj(const char *filename, mesh3 *mesh)
   char path[MAX_PATH];
   GetModuleFileNameA(NULL, path, MAX_PATH);
   *strrchr(path, '\\') = '\0'; 
-  snprintf(path, MAX_PATH, "%s\\%s", path, filename);
-  FILE *fp = fopen(filename, "r");
+  snprintf(path, MAX_PATH, "%s\\..\\%s", path, filename);
+  puts(path);
+  FILE *fp = fopen(path, "r");
   size_t v_capacity = 0;
   size_t t_capacity = 0;
   vec3 *vertices = NULL;

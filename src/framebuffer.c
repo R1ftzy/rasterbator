@@ -28,15 +28,16 @@ void clear_framebuffer(framebuffer *fb, uint32_t color)
   for (int i = 0; i < fb->width * fb->height; i++)
   {
     fb->pixels[i] = color;
+    fb->depth[i] = 1.0f;
   }
-  clear_depth(fb);
 }
 void init_framebuffer(framebuffer *fb)
 {
   fb->width = SCREEN_WIDTH;
   fb->height = SCREEN_HEIGHT;
-  fb->pixels = malloc(fb->width * fb->height * sizeof(uint32_t));
-  memset(fb->pixels, 0, fb->width * fb->height * sizeof(uint32_t));
+  // fb->pixels = malloc(fb->width * fb->height * sizeof(uint32_t));
+  // memset(fb->pixels, 0, fb->width * fb->height * sizeof(uint32_t));
+  fb->pixels = NULL;
   fb->depth = malloc(fb->width * fb->height * sizeof(float));
   clear_depth(fb);
 }

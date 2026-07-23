@@ -1,7 +1,7 @@
 CC       = gcc
 TARGET   = raster
 
-SRC      = src/display.c src/framebuffer.c src/draw.c src/color.c src/vecmath.c src/camera.c src/obj.c src/trans.c
+SRC      = src/main.c src/RB_windows.c src/framebuffer.c src/draw.c src/color.c src/vecmath.c src/camera.c src/obj.c src/trans.c
 DEBUG_FLAGS  = -O0 -g -Wall -Wextra -Iinclude
 RELEASE_FLAGS = -O3 -march=native -Iinclude
 
