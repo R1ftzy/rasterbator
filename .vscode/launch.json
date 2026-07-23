@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Raster",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/bin/raster.exe",
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "Build",
+            "console": "integratedTerminal"
+        }
+    ]
+}
