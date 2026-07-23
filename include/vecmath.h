@@ -6,16 +6,16 @@
 
 typedef vec4 quat;
 
-vec3 vec3Add(vec3 A, vec3 B);
+vec3 vec3_add(vec3 A, vec3 B);
 
-vec3 vec3Sub(vec3 A, vec3 B);
+vec3 vec3_sub(vec3 A, vec3 B);
 
-float vec3Dot(vec3 A, vec3 B);
+float vec3_dot(vec3 A, vec3 B);
 
-vec3 vecCross(vec3 A, vec3 B);
+vec3 vec3_cross(vec3 A, vec3 B);
 
-vec3 vec3Normalize(vec3 v);
+vec3 vec3_normalize(vec3 v);
 
-vec4 mat4MulVec4(mat4 m, vec4 v);
+vec4 mat4_mul_vec4(mat4 m, vec4 v);
 
 #endif

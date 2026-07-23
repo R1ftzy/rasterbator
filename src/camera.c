@@ -3,7 +3,7 @@
 #include "config.h"
 #include <math.h>
 
-void initCam(camera *cam)
+void init_cam(camera *cam)
 {
   cam->position = (vec3){0, 0, 0};
   cam->fnear = FNEAR;
@@ -12,7 +12,7 @@ void initCam(camera *cam)
   cam->aspect = (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT;
 }
 
-mat4 camProj(camera *cam)
+mat4 cam_proj(camera *cam)
 {
   mat4 matProj = {0};
   float FovRad = 1.0f / tanf(0.5f * DEG_TO_RAD(cam->fov));

@@ -1,6 +1,6 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 #include "types.h"
-void initCam(camera *cam);
-mat4 camProj(camera *cam);
+void init_cam(camera *cam);
+mat4 cam_proj(camera *cam);
 #endif

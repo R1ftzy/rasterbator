@@ -11,7 +11,7 @@
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define LERP(a, b, t) ((a) * (1.0f - (t)) + (b) * (t))
 
-void fill(framebuffer *fb, uint32_t color)
+void RB_fill(framebuffer *fb, uint32_t color)
 {
   for (int x = 0; x < fb->width * fb->height; x++)
   {
@@ -19,7 +19,7 @@ void fill(framebuffer *fb, uint32_t color)
   }
 }
 
-void drawLine2d(framebuffer *fb, vec2i A, vec2i B, uint32_t color)
+void RB_line2d(framebuffer *fb, vec2i A, vec2i B, uint32_t color)
 {
   int x0, x1, y0, y1;
   x0 = A.x;
@@ -90,11 +90,11 @@ void drawLine3d(framebuffer *fb, vec2i A, vec2i B, uint32_t color, float d0, flo
   }
 }
 
-void drawTri2d(framebuffer *fb, tri2 tri, uint32_t color)
+void RB_tri2d(framebuffer *fb, tri2 tri, uint32_t color)
 {
-  drawLine2d(fb, tri.v[0], tri.v[1], color);
-  drawLine2d(fb, tri.v[0], tri.v[2], color);
-  drawLine2d(fb, tri.v[1], tri.v[2], color);
+  RB_line2d(fb, tri.v[0], tri.v[1], color);
+  RB_line2d(fb, tri.v[0], tri.v[2], color);
+  RB_line2d(fb, tri.v[1], tri.v[2], color);
 }
 
 bool is_top_left(vec2i *start, vec2i *end)
@@ -112,7 +112,7 @@ int edge_cross(vec2i *a, vec2i *b, vec2i *p)
   return ab.x * ap.y - ab.y * ap.x;
 }
 
-void fillTri2d(framebuffer *fb, tri2 tri, uint32_t color)
+void RB_fill_tri2d(framebuffer *fb, tri2 tri, uint32_t color)
 {
   // Finds the bounding box with all candidate pixels
   int x_min = MAX(MIN(MIN(tri.v[0].x, tri.v[1].x), tri.v[2].x), 0);
@@ -127,7 +127,7 @@ void fillTri2d(framebuffer *fb, tri2 tri, uint32_t color)
   int delta_w1_row = (tri.v[0].x - tri.v[2].x);
   int delta_w2_row = (tri.v[1].x - tri.v[0].x);
 
-  // Rasterization fill convention (top-left rule)
+  // Rasterization RB_fill convention (top-left rule)
   int bias0 = is_top_left(&tri.v[1], &tri.v[2]) ? 0 : -1;
   int bias1 = is_top_left(&tri.v[2], &tri.v[0]) ? 0 : -1;
   int bias2 = is_top_left(&tri.v[0], &tri.v[1]) ? 0 : -1;
@@ -160,16 +160,16 @@ void fillTri2d(framebuffer *fb, tri2 tri, uint32_t color)
   }
 }
 
-void drawTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
+void RB_tri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
 {
-  mat4 matProj = camProj(cam);
+  mat4 matProj = cam_proj(cam);
   vec4 v0 = VEC3_TO_VEC4(tri.v[0]);
   vec4 v1 = VEC3_TO_VEC4(tri.v[1]);
   vec4 v2 = VEC3_TO_VEC4(tri.v[2]);
 
-  vec4 o0 = mat4MulVec4(matProj, v0);
-  vec4 o1 = mat4MulVec4(matProj, v1);
-  vec4 o2 = mat4MulVec4(matProj, v2);
+  vec4 o0 = mat4_mul_vec4(matProj, v0);
+  vec4 o1 = mat4_mul_vec4(matProj, v1);
+  vec4 o2 = mat4_mul_vec4(matProj, v2);
 
   o0.x /= o0.w;
   o0.y /= o0.w;
@@ -192,16 +192,16 @@ void drawTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
   drawLine3d(fb, vi2, vi0, color, o2.z, o0.z);
 }
 
-void fillTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
+void RB_fill_tri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
 {
-  mat4 matProj = camProj(cam);
+  mat4 matProj = cam_proj(cam);
   vec4 v0 = VEC3_TO_VEC4(tri.v[0]);
   vec4 v1 = VEC3_TO_VEC4(tri.v[1]);
   vec4 v2 = VEC3_TO_VEC4(tri.v[2]);
 
-  vec4 o0 = mat4MulVec4(matProj, v0);
-  vec4 o1 = mat4MulVec4(matProj, v1);
-  vec4 o2 = mat4MulVec4(matProj, v2);
+  vec4 o0 = mat4_mul_vec4(matProj, v0);
+  vec4 o1 = mat4_mul_vec4(matProj, v1);
+  vec4 o2 = mat4_mul_vec4(matProj, v2);
 
   if (o0.w < cam->fnear || o1.w < cam->fnear || o2.w < cam->fnear)
   {
@@ -238,7 +238,7 @@ void fillTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
   int delta_w1_row = (tri2d.v[0].x - tri2d.v[2].x);
   int delta_w2_row = (tri2d.v[1].x - tri2d.v[0].x);
 
-  // Rasterization fill convention (top-left rule)
+  // Rasterization RB_fill convention (top-left rule)
   int bias0 = is_top_left(&tri2d.v[1], &tri2d.v[2]) ? 0 : -1;
   int bias1 = is_top_left(&tri2d.v[2], &tri2d.v[0]) ? 0 : -1;
   int bias2 = is_top_left(&tri2d.v[0], &tri2d.v[1]) ? 0 : -1;
@@ -275,29 +275,28 @@ void fillTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
   }
 }
 
-void drawMesh3d(framebuffer *fb, camera *cam, mesh3 mesh, vec3 light, uint32_t color)
+void RB_draw_mesh3d(framebuffer *fb, camera *cam, mesh3 mesh, vec3 light, uint32_t color)
 {
   uint8_t red = (color >> 16) & 0xFF;
   uint8_t green = (color >> 8) & 0xFF;
   uint8_t blue = color & 0xFF;
   for (size_t i = 0; i < mesh.count; i++)
   {
-    vec3 normal = vec3Normalize(vecCross(vec3Sub(mesh.tris[i].v[1], mesh.tris[i].v[0]), vec3Sub(mesh.tris[i].v[2], mesh.tris[i].v[0])));
-    vec3 los = vec3Sub(cam->position, mesh.tris[i].v[0]);
-    if (vec3Dot(normal, los) <= 0)
+    vec3 normal = vec3_normalize(vec3_cross(vec3_sub(mesh.tris[i].v[1], mesh.tris[i].v[0]), vec3_sub(mesh.tris[i].v[2], mesh.tris[i].v[0])));
+    vec3 los = vec3_sub(cam->position, mesh.tris[i].v[0]);
+    if (vec3_dot(normal, los) <= 0)
       continue;
 
-    vec3 face_centre = vec3Add(vec3Add(mesh.tris[i].v[0], mesh.tris[i].v[1]), mesh.tris[i].v[2]);
+    vec3 face_centre = vec3_add(vec3_add(mesh.tris[i].v[0], mesh.tris[i].v[1]), mesh.tris[i].v[2]);
 
     face_centre.x /= 3;
     face_centre.y /= 3;
     face_centre.z /= 3;
 
+    vec3 light_dir = vec3_sub(light, face_centre);
 
-    vec3 light_dir = vec3Sub(light, face_centre);
-
-    float intensity = vec3Dot(normal, vec3Normalize(light_dir));
+    float intensity = vec3_dot(normal, vec3_normalize(light_dir));
     intensity = (intensity < 0) ? 0.0f : intensity;
-    fillTri3d(fb, cam, mesh.tris[i], rgb(red * intensity, green * intensity, blue * intensity));
+    RB_fill_tri3d(fb, cam, mesh.tris[i], rgb(red * intensity, green * intensity, blue * intensity));
   }
 }

@@ -27,9 +27,9 @@ typedef struct
 
 void init(scene *m)
 {
-  initCam(&m->cam);
+  init_cam(&m->cam);
   m->light = (vec3){-1.0f, -0.5f, 2.0f};
-  fill(&fb, rgb(183, 183, 183));
+  RB_fill(&fb, rgb(183, 183, 183));
   tri3 tris[] = {
       {{{-5.0f, -1.8f, 3.0f}, {-5.0f, -1.8f, 8.0f}, {5.0f, -1.8f, 3.0f}}},
       {{{-5.0f, -1.8f, 8.0f}, {5.0f, -1.8f, 8.0f}, {5.0f, -1.8f, 3.0f}}}};
@@ -38,10 +38,10 @@ void init(scene *m)
   m->base.count = sizeof(tris) / sizeof(tris[0]);
   parse_obj("assets/Sonic.obj", &m->sonic);
   parse_obj("assets/icosphere.obj", &m->sphere);
-  moveMesh(&m->sonic, 0, 0, 3.5);
-  rotateMeshEuler(&m->sonic, 90, -45, 0);
-  scaleMesh(&m->sphere, 0.2, 0.2, 0.2);
-  moveMesh(&m->sphere, m->light.x, m->light.y, m->light.z);
+  translate_mesh3(&m->sonic, 0, 0, 3.5);
+  rotate_mesh3_euler(&m->sonic, 90, -45, 0);
+  scale_mesh3(&m->sphere, 0.2, 0.2, 0.2);
+  translate_mesh3(&m->sphere, m->light.x, m->light.y, m->light.z);
   m->dt = 0;
   m->speed = 0.0;
 }
@@ -52,16 +52,16 @@ void update(scene *m)
   float r = 2.0f;
   vec3 prev_light = m->light;
   m->light = (vec3){r * cosf(m->speed), 0.0f, r * sinf(m->speed) + 3.5};
-  moveMesh(&m->sphere, m->light.x - prev_light.x, m->light.y - prev_light.y, m->light.z - prev_light.z);
-  rotateMeshEuler(&m->sphere, 0.0f, 15 * m->dt, 0.0f);
+  translate_mesh3(&m->sphere, m->light.x - prev_light.x, m->light.y - prev_light.y, m->light.z - prev_light.z);
+  rotate_mesh3_euler(&m->sphere, 0.0f, 15 * m->dt, 0.0f);
   clear_framebuffer(&fb, rgb(183, 183, 183));
-  rotateMeshEuler(&m->sonic, 0, 60 * m->dt, 0);
+  rotate_mesh3_euler(&m->sonic, 0, 60 * m->dt, 0);
   float prev_sin = sinf(m->speed - 2 * m->dt);
   float curr_sin = sinf(m->speed);
-  // moveMesh(&m->sonic, 0, 0, 0.5 * (curr_sin - prev_sin));
-  drawMesh3d(&fb, &m->cam, m->base, m->light, rgb(140, 183, 76));
-  drawMesh3d(&fb, &m->cam, m->sonic, m->light, rgb(89, 135, 199));
-  drawMesh3d(&fb, &m->cam, m->sphere, m->light, rgb(233, 234, 172));
+  // translate_mesh3(&m->sonic, 0, 0, 0.5 * (curr_sin - prev_sin));
+  RB_draw_mesh3d(&fb, &m->cam, m->base, m->light, rgb(140, 183, 76));
+  RB_draw_mesh3d(&fb, &m->cam, m->sonic, m->light, rgb(89, 135, 199));
+  RB_draw_mesh3d(&fb, &m->cam, m->sphere, m->light, rgb(233, 234, 172));
 }
 
 int main()
