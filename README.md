@@ -1,7 +1,7 @@
 # Rasterbator (ik very funny)
 
 > [!IMPORTANT]
-> This build is Windows only. For the standalone graphics library, use the main branch (outdated).
+> This build is Windows only. For the portable build, use the main branch (outdated).
 
 Very primitive software rasterizer in C from scratch.
 

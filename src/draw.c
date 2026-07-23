@@ -115,10 +115,10 @@ int edge_cross(vec2i *a, vec2i *b, vec2i *p)
 void fillTri2d(framebuffer *fb, tri2 tri, uint32_t color)
 {
   // Finds the bounding box with all candidate pixels
-  int x_min = MIN(MIN(tri.v[0].x, tri.v[1].x), tri.v[2].x);
-  int y_min = MIN(MIN(tri.v[0].y, tri.v[1].y), tri.v[2].y);
-  int x_max = MAX(MAX(tri.v[0].x, tri.v[1].x), tri.v[2].x);
-  int y_max = MAX(MAX(tri.v[0].y, tri.v[1].y), tri.v[2].y);
+  int x_min = MAX(MIN(MIN(tri.v[0].x, tri.v[1].x), tri.v[2].x), 0);
+  int y_min = MAX(MIN(MIN(tri.v[0].y, tri.v[1].y), tri.v[2].y), 0);
+  int x_max = MIN(MAX(MAX(tri.v[0].x, tri.v[1].x), tri.v[2].x), fb->width - 1);
+  int y_max = MIN(MAX(MAX(tri.v[0].y, tri.v[1].y), tri.v[2].y), fb->height - 1);
   // Compute the constant delta_s that will be used for the horizontal and vertical steps
   int delta_w0_col = (tri.v[1].y - tri.v[2].y);
   int delta_w1_col = (tri.v[2].y - tri.v[0].y);
@@ -226,10 +226,10 @@ void fillTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
   tri2 tri2d = {vi0, vi1, vi2};
 
   // Finds the bounding box with all candidate pixels
-  int x_min = MIN(MIN(tri2d.v[0].x, tri2d.v[1].x), tri2d.v[2].x);
-  int y_min = MIN(MIN(tri2d.v[0].y, tri2d.v[1].y), tri2d.v[2].y);
-  int x_max = MAX(MAX(tri2d.v[0].x, tri2d.v[1].x), tri2d.v[2].x);
-  int y_max = MAX(MAX(tri2d.v[0].y, tri2d.v[1].y), tri2d.v[2].y);
+  int x_min = MAX(MIN(MIN(tri2d.v[0].x, tri2d.v[1].x), tri2d.v[2].x), 0);
+  int y_min = MAX(MIN(MIN(tri2d.v[0].y, tri2d.v[1].y), tri2d.v[2].y), 0);
+  int x_max = MIN(MAX(MAX(tri2d.v[0].x, tri2d.v[1].x), tri2d.v[2].x), fb->width - 1);
+  int y_max = MIN(MAX(MAX(tri2d.v[0].y, tri2d.v[1].y), tri2d.v[2].y), fb->height - 1);
   // Compute the constant delta_s that will be used for the horizontal and vertical steps
   int delta_w0_col = (tri2d.v[1].y - tri2d.v[2].y);
   int delta_w1_col = (tri2d.v[2].y - tri2d.v[0].y);
@@ -248,6 +248,9 @@ void fillTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
   int w0_row = edge_cross(&tri2d.v[1], &tri2d.v[2], &p0) + bias0;
   int w1_row = edge_cross(&tri2d.v[2], &tri2d.v[0], &p0) + bias1;
   int w2_row = edge_cross(&tri2d.v[0], &tri2d.v[1], &p0) + bias2;
+
+  float area_inv = 1.0f / (w0_row + w1_row + w2_row);
+
   // Loop all candidate pixels inside the bounding box
   for (int y = y_min; y <= y_max; y++)
   {
@@ -256,10 +259,10 @@ void fillTri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
     int w2 = w2_row;
     for (int x = x_min; x <= x_max; x++)
     {
-      float depth = (w0 * o0.z + w1 * o1.z + w2 * o2.z) / (w0 + w1 + w2);
       bool is_inside = w0 >= 0 && w1 >= 0 && w2 >= 0;
       if (is_inside)
       {
+        float depth = (w0 * o0.z + w1 * o1.z + w2 * o2.z) * area_inv;
         set_pixel(fb, x, y, color, depth);
       }
       w0 += delta_w0_col;
@@ -285,6 +288,12 @@ void drawMesh3d(framebuffer *fb, camera *cam, mesh3 mesh, vec3 light, uint32_t c
       continue;
 
     vec3 face_centre = vec3Add(vec3Add(mesh.tris[i].v[0], mesh.tris[i].v[1]), mesh.tris[i].v[2]);
+
+    face_centre.x /= 3;
+    face_centre.y /= 3;
+    face_centre.z /= 3;
+
+
     vec3 light_dir = vec3Sub(light, face_centre);
 
     float intensity = vec3Dot(normal, vec3Normalize(light_dir));

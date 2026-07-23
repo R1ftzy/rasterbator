@@ -10,4 +10,6 @@ void rotateMeshQuat(mesh3 *mesh, float w, float x, float y, float z);
 
 void scaleMesh(mesh3 *mesh, float x_scale, float y_scale, float z_scale);
 
+vec3 getCentroid(mesh3 *mesh);
+
 #endif
