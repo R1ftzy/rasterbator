@@ -288,9 +288,9 @@ void RB_draw_mesh3d(framebuffer *fb, camera *cam, mesh3 mesh, vec3 light, uint32
   for (size_t i = 0; i < mesh.count; i++)
   {
     vec3 normal = vec3_normalize(vec3_cross(vec3_sub(mesh.tris[i].v[1], mesh.tris[i].v[0]), vec3_sub(mesh.tris[i].v[2], mesh.tris[i].v[0])));
-    vec3 los = vec3_sub(cam->eye, mesh.tris[i].v[0]);
-    // if (vec3_dot(normal, los) <= 0)
-    //   continue;
+    vec3 los = vec3_sub(mesh.tris[i].v[0], cam->eye);
+    if (vec3_dot(normal, los) <= 0)
+      continue;
 
     vec3 face_centre = vec3_add(vec3_add(mesh.tris[i].v[0], mesh.tris[i].v[1]), mesh.tris[i].v[2]);
 

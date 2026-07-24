@@ -33,8 +33,8 @@ void init(scene *m)
   m->light = (vec3){-1.0f, -0.5f, 2.0f};
   RB_fill(&fb, rgb(183, 183, 183));
   tri3 tris[] = {
-      {{{-5.0f, -1.8f, -5.0f}, {-5.0f, -1.8f, 5.0f}, {5.0f, -1.8f, -5.0f}}},
-      {{{-5.0f, -1.8f, 5.0f}, {5.0f, -1.8f, 5.0f}, {5.0f, -1.8f, -5.0f}}}};
+      {{{-5.0f, -1.2f, -5.0f}, {-5.0f, -1.2f, 5.0f}, {5.0f, -1.2f, -5.0f}}},
+      {{{-5.0f, -1.2f, 5.0f}, {5.0f, -1.2f, 5.0f}, {5.0f, -1.2f, -5.0f}}}};
   m->base.tris = malloc(sizeof(tris));
   memcpy(m->base.tris, tris, sizeof(tris));
   m->base.count = sizeof(tris) / sizeof(tris[0]);
