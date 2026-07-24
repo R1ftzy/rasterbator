@@ -33,7 +33,7 @@ mat4 look_at_matrix(camera *cam)
 {
   vec3 forward = vec3_normalize(vec3_sub(cam->target, cam->eye));
   vec3 right = vec3_normalize(vec3_cross(forward, cam->up));
-  vec3 up = vec3_cross(right, forward);
+  vec3 up = vec3_normalize(vec3_cross(right, forward));
 
   mat4 look = {0};
 
@@ -45,21 +45,15 @@ mat4 look_at_matrix(camera *cam)
   look.m[1][1] = up.y;
   look.m[1][2] = up.z;
 
-  look.m[2][0] = forward.x;
-  look.m[2][1] = forward.y;
-  look.m[2][2] = forward.z;
+  look.m[2][0] = -forward.x;
+  look.m[2][1] = -forward.y;
+  look.m[2][2] = -forward.z;
+
+  look.m[0][3] = -vec3_dot(right, cam->eye);
+  look.m[1][3] = -vec3_dot(up, cam->eye);
+  look.m[2][3] = -vec3_dot(forward, cam->eye);
 
   look.m[3][3] = 1;
 
-  mat4 at = {0};
-
-  at.m[0][0] = 1;
-  at.m[1][1] = 1;
-  at.m[2][2] = 1;
-  at.m[3][3] = 1;
-  at.m[0][3] = - cam->eye.x;
-  at.m[1][3] = - cam->eye.y;
-  at.m[2][3] = - cam->eye.z;
-
-  return mat4_mul_mat4(look, at);
+  return look;
 }

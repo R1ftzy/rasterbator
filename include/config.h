@@ -5,6 +5,6 @@
 #define SCREEN_HEIGHT 540
 #define FNEAR 0.1f
 #define FFAR 1000.0f
-#define FFOV 90.0f
+#define FFOV 67.0f
 
 #endif
