@@ -1,3 +1,10 @@
+/*
+right is +X
+up is +Y
+forward is -Z
+*/
+
+
 #include "types.h"
 #include "vecmath.h"
 #include "config.h"
@@ -7,7 +14,7 @@ void init_cam(camera *cam)
 {
   cam->eye = (vec3){0, 0, 0};
   cam->up = (vec3){0, 1, 0};
-  cam->target = (vec3){0, 0, 1};
+  cam->target = (vec3){0, 0, -1};
   cam->fnear = FNEAR;
   cam->ffar = FFAR;
   cam->fov = FFOV;
@@ -32,8 +39,8 @@ mat4 cam_proj(camera *cam)
 mat4 look_at_matrix(camera *cam)
 {
   vec3 forward = vec3_normalize(vec3_sub(cam->target, cam->eye));
-  vec3 right = vec3_normalize(vec3_cross(forward, cam->up));
-  vec3 up = vec3_normalize(vec3_cross(right, forward));
+  vec3 right = vec3_normalize(vec3_cross(cam->up, forward));
+  vec3 up = vec3_normalize(vec3_cross(forward, right));
 
   mat4 look = {0};
 
@@ -45,9 +52,9 @@ mat4 look_at_matrix(camera *cam)
   look.m[1][1] = up.y;
   look.m[1][2] = up.z;
 
-  look.m[2][0] = -forward.x;
-  look.m[2][1] = -forward.y;
-  look.m[2][2] = -forward.z;
+  look.m[2][0] = forward.x;
+  look.m[2][1] = forward.y;
+  look.m[2][2] = forward.z;
 
   look.m[0][3] = -vec3_dot(right, cam->eye);
   look.m[1][3] = -vec3_dot(up, cam->eye);

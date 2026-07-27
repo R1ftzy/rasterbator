@@ -28,13 +28,13 @@ typedef struct
 void init(scene *m)
 {
   init_cam(&m->cam);
-  m->cam.eye = (vec3){0, -2.0f, -8};
+  m->cam.eye = (vec3){0, 2.0f, 8};
   m->cam.target = (vec3){0, 0, 0};
-  m->light = (vec3){-1.0f, -0.5f, 2.0f};
+  m->light = (vec3){-1.0f, -0.5f, -2.0f};
   RB_fill(&fb, rgb(183, 183, 183));
   tri3 tris[] = {
-      {{{-5.0f, -1.2f, -5.0f}, {-5.0f, -1.2f, 5.0f}, {5.0f, -1.2f, -5.0f}}},
-      {{{-5.0f, -1.2f, 5.0f}, {5.0f, -1.2f, 5.0f}, {5.0f, -1.2f, -5.0f}}}};
+      {{{-5.0f, -1.2f, 5.0f}, {5.0f, -1.2f, 5.0f}, {-5.0f, -1.2f, -5.0f}}},
+      {{{-5.0f, -1.2f, -5.0f}, {5.0f, -1.2f, 5.0f}, {5.0f, -1.2f, -5.0f}}}};
   m->base.tris = malloc(sizeof(tris));
   memcpy(m->base.tris, tris, sizeof(tris));
   m->base.count = sizeof(tris) / sizeof(tris[0]);
@@ -52,7 +52,7 @@ void update(scene *m)
 {
   m->speed += 2 * m->dt;
   float r = 2.0f;
-  m->cam.eye = (vec3){-8 * cosf(m->speed), -2.0f, -8 * sinf(m->speed)};
+  m->cam.eye = (vec3){-8 * cosf(m->speed), sinf(m->speed * 2) + 3.0f, 8 * sinf(m->speed)};
 
   vec3 prev_light = m->light;
   m->light = (vec3){r * cosf(2 * m->speed), 0.0f, r * sinf(2 * m->speed)};
