@@ -12,7 +12,7 @@
 #include "trans.h"
 #include "RB_windows.h"
 
-extern framebuffer fb;
+framebuffer fb;
 
 typedef struct
 {

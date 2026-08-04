@@ -166,14 +166,20 @@ void RB_fill_tri2d(framebuffer *fb, tri2 tri, uint32_t color)
 
 void RB_tri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
 {
-  mat4 matProj = cam_proj(cam);
+  // mat4 view = look_at_matrix(cam);
+  // mat4 matProj = cam_proj(cam);
+  mat4 view = update_view(cam);
   vec4 v0 = VEC3_TO_VEC4(tri.v[0]);
   vec4 v1 = VEC3_TO_VEC4(tri.v[1]);
   vec4 v2 = VEC3_TO_VEC4(tri.v[2]);
 
-  vec4 o0 = mat4_mul_vec4(matProj, v0);
-  vec4 o1 = mat4_mul_vec4(matProj, v1);
-  vec4 o2 = mat4_mul_vec4(matProj, v2);
+  vec4 o0 = mat4_mul_vec4(view, v0);
+  vec4 o1 = mat4_mul_vec4(view, v1);
+  vec4 o2 = mat4_mul_vec4(view, v2);
+
+  // vec4 o0 = mat4_mul_vec4(matProj, l0);
+  // vec4 o1 = mat4_mul_vec4(matProj, l1);
+  // vec4 o2 = mat4_mul_vec4(matProj, l2);
 
   o0.x /= o0.w;
   o0.y /= o0.w;
@@ -198,21 +204,29 @@ void RB_tri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
 
 void RB_fill_tri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
 {
-  mat4 view = look_at_matrix(cam);
-  mat4 matProj = cam_proj(cam);
+  // mat4 view = look_at_matrix(cam);
+  // mat4 matProj = cam_proj(cam);
+
+  mat4 view = update_view(cam);
+
   vec4 v0 = VEC3_TO_VEC4(tri.v[0]);
   vec4 v1 = VEC3_TO_VEC4(tri.v[1]);
   vec4 v2 = VEC3_TO_VEC4(tri.v[2]);
 
-  vec4 l0 = mat4_mul_vec4(view, v0);
-  vec4 l1 = mat4_mul_vec4(view, v1);
-  vec4 l2 = mat4_mul_vec4(view, v2);
+  vec4 o0 = mat4_mul_vec4(view, v0);
+  vec4 o1 = mat4_mul_vec4(view, v1);
+  vec4 o2 = mat4_mul_vec4(view, v2);
 
-  vec4 o0 = mat4_mul_vec4(matProj, l0);
-  vec4 o1 = mat4_mul_vec4(matProj, l1);
-  vec4 o2 = mat4_mul_vec4(matProj, l2);
 
-  if (o0.w < cam->fnear || o1.w < cam->fnear || o2.w < cam->fnear)
+  // vec4 l0 = mat4_mul_vec4(view, v0);
+  // vec4 l1 = mat4_mul_vec4(view, v1);
+  // vec4 l2 = mat4_mul_vec4(view, v2);
+
+  // vec4 o0 = mat4_mul_vec4(matProj, l0);
+  // vec4 o1 = mat4_mul_vec4(matProj, l1);
+  // vec4 o2 = mat4_mul_vec4(matProj, l2);
+
+  if (o0.w < cam->fnear.d || o1.w < cam->fnear.d || o2.w < cam->fnear.d)
   {
     return;
   }

@@ -2,19 +2,12 @@
 #define UNICODE
 #endif
 #include <windows.h>
-#include <math.h>
 #include <stdbool.h>
 #include "types.h"
 #include "framebuffer.h"
-#include "draw.h"
-#include "color.h"
-#include "vecmath.h"
-#include "camera.h"
 #include "config.h"
-#include "obj.h"
-#include "trans.h"
 
-framebuffer fb;
+extern framebuffer fb;
 BITMAPINFO bmi = {0};
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

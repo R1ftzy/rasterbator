@@ -57,14 +57,26 @@ typedef struct
   size_t count;
 } mesh3;
 
+typedef struct  
+{
+  vec3 normal;
+  float d;
+} plane;
+
 typedef struct
 {
   vec3 eye;
   vec3 target;
   vec3 up;
+
   float fov;
-  float fnear;
-  float ffar;
+  plane fnear;
+  plane ffar;
+  plane left;
+  plane right;
+  plane bottom;
+  plane top;
+
   float aspect;
 } camera;
 

@@ -8,4 +8,6 @@ mat4 cam_proj(camera *cam);
 
 mat4 look_at_matrix(camera *cam);
 
+mat4 update_view(camera *cam);
+
 #endif

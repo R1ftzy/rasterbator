@@ -3,14 +3,12 @@
 
 vec3 vec3_add(vec3 A, vec3 B)
 {
-  vec3 vec = {A.x + B.x, A.y + B.y, A.z + B.z};
-  return vec;
+  return (vec3){A.x + B.x, A.y + B.y, A.z + B.z};
 }
 
 vec3 vec3_sub(vec3 A, vec3 B)
 {
-  vec3 vec = {A.x - B.x, A.y - B.y, A.z - B.z};
-  return vec;
+  return (vec3){A.x - B.x, A.y - B.y, A.z - B.z};
 }
 
 float vec3_dot(vec3 A, vec3 B)
@@ -18,13 +16,19 @@ float vec3_dot(vec3 A, vec3 B)
   return A.x * B.x + A.y * B.y + A.z * B.z;
 }
 
+vec3 vec3_projected(vec3 A, vec3 B){
+  // projection of vector B on vector A
+  float inv_mag = 1 / vec3_dot(A,A);
+  float dot = vec3_dot(A,B);
+  return (vec3){A.x * dot * inv_mag, A.y * dot * inv_mag, A.z * dot * inv_mag};
+}
+
 vec3 vec3_cross(vec3 A, vec3 B)
 {
-  vec3 vec = {
+  return (vec3){
       A.y * B.z - A.z * B.y,
       A.z * B.x - A.x * B.z,
       A.x * B.y - A.y * B.x};
-  return vec;
 }
 
 vec3 vec3_normalize(vec3 v)
