@@ -7,10 +7,7 @@ Very primitive software rasterizer in C from scratch.
 
 can draw 3D shi onto a 2D screen in real time!
 
-![render](assets/sonic_demo.gif)
-![depth](assets/depth.png)
-
-The showcase video uses a Sonic the Hedgehog model (© SEGA) which is not included in this repo.
+![render](assets/suzanne_demo.gif)
 
 ## Build
 
