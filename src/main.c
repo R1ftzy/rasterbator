@@ -18,7 +18,7 @@ typedef struct
 {
   vec3 light;
   mesh3 base;
-  mesh3 sonic;
+  mesh3 suzanne;
   mesh3 sphere;
   camera cam;
   float speed;
@@ -38,11 +38,12 @@ void init(scene *m)
   m->base.tris = malloc(sizeof(tris));
   memcpy(m->base.tris, tris, sizeof(tris));
   m->base.count = sizeof(tris) / sizeof(tris[0]);
-  parse_obj("assets/Sonic.obj", &m->sonic);
+  parse_obj("assets/suzanne.obj", &m->suzanne);
   parse_obj("assets/icosphere.obj", &m->sphere);
-  translate_mesh3(&m->sonic, 0, 0, 0);
-  rotate_mesh3_euler(&m->sonic, 90, 0, 0);
+  translate_mesh3(&m->suzanne, 0, 0, 0);
+  rotate_mesh3_euler(&m->suzanne, 90, 0, 0);
   scale_mesh3(&m->sphere, 0.2, 0.2, 0.2);
+  scale_mesh3(&m->suzanne, 1.2, 1.2, 1.2);
   translate_mesh3(&m->sphere, m->light.x, m->light.y, m->light.z);
   m->dt = 0;
   m->speed = 0.0;
@@ -50,7 +51,7 @@ void init(scene *m)
 
 void update(scene *m)
 {
-  m->speed += 2 * m->dt;
+  m->speed += 1.75 * m->dt;
   float r = 2.0f;
   m->cam.eye = (vec3){-8 * cosf(m->speed), sinf(m->speed * 2) + 3.0f, 8 * sinf(m->speed)};
 
@@ -59,12 +60,12 @@ void update(scene *m)
   translate_mesh3(&m->sphere, m->light.x - prev_light.x, m->light.y - prev_light.y, m->light.z - prev_light.z);
   rotate_mesh3_euler(&m->sphere, 0.0f, 15 * m->dt, 0.0f);
   clear_framebuffer(&fb, rgb(183, 183, 183));
-  // rotate_mesh3_euler(&m->sonic, 0, 60 * m->dt, 0);
+  // rotate_mesh3_euler(&m->suzanne, 0, 60 * m->dt, 0);
   float prev_sin = sinf(m->speed - 2 * m->dt);
   float curr_sin = sinf(m->speed);
-  // translate_mesh3(&m->sonic, 0, 0, 0.5 * (curr_sin - prev_sin));
+  // translate_mesh3(&m->suzanne, 0, 0, 0.5 * (curr_sin - prev_sin));
   RB_draw_mesh3d(&fb, &m->cam, m->base, m->light, rgb(140, 183, 76));
-  RB_draw_mesh3d(&fb, &m->cam, m->sonic, m->light, rgb(89, 135, 199));
+  RB_draw_mesh3d(&fb, &m->cam, m->suzanne, m->light, rgb(187, 126, 45));
   RB_draw_mesh3d(&fb, &m->cam, m->sphere, m->light, rgb(233, 234, 172));
 }
 
