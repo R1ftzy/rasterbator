@@ -1,26 +1,45 @@
 # Rasterbator (ik very funny)
 
-> [!IMPORTANT]
-> This build is Windows only. Build in MSYS2
-
-Very primitive software rasterizer in C from scratch.
+A software rasterizer in C from scratch.
 
 can draw 3D shi onto a 2D screen in real time!
 
 ![render](assets/suzanne_demo.gif)
-![depth](assets/depth.png)
 
 ## Build
 
-```sh
-make
-```
-Builds the optimized `-O3` version.
+> [!IMPORTANT]
+> MSYS2 required on Windows.
+
+Two platform layers are available: Win32 (default, no extra files!) and SDL3 (cross-platform, requires SDL3).
+
+### Win32
 
 ```sh
-make debug
+make          # optimized
+make debug    # debug symbols
 ```
-Builds with `-O0` and debug symbols.
+
+### SDL
+
+Requires SDL ofc. but you need to drop the files in manually:
+
+1. Download the SDL3 libraries from the [SDL releases page](https://github.com/libsdl-org/SDL/releases)
+2. Extract into `external/SDL3/`:
+
+```
+   external/SDL3/
+   ├── include/
+   │   └── SDL3/
+   └── lib/
+       └── ...
+```
+
+3. to build
+
+```sh
+make sdl
+```
 
 ## Usage
 
@@ -28,11 +47,11 @@ Builds with `-O0` and debug symbols.
 ./bin/raster
 ```
 
-Ts (this) opens a Win32 window with real-time rendering.
+Ts (this) opens a window with real-time rendering.
 
 > [!TIP]
 > Directly use ts if you don't hate yourself.
+>
 > ```sh
 > make && ./bin/raster
 > ```
-

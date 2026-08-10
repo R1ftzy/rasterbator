@@ -54,9 +54,11 @@ void RB_create_window()
   ReleaseDC(hwnd, windowDC);
 }
 
-void RB_set_title(wchar_t title[64])
+void RB_set_title(const char* title)
 {
-  SetWindowTextW(hwnd, title);
+  wchar_t wtitle[64];
+  MultiByteToWideChar(CP_UTF8, 0, title, -1, wtitle, 64);
+  SetWindowTextW(hwnd, wtitle);
 }
 
 extern int main();

@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 #include "types.h"
 #include "framebuffer.h"
 #include "draw.h"
@@ -99,8 +100,8 @@ int main()
     // Checking Framerate
     if (frame_count % 30 == 0)
     {
-      wchar_t title[64];
-      swprintf(title, 64, L"rasterbator | %.0f fps | %.0f fps min", 1.0f / m.dt, min_fps);
+      char title[64];
+      snprintf(title, 64, "rasterbator | %.0f fps | %.0f fps min", 1.0f / m.dt, min_fps);
       RB_set_title(title);
     }
     if (frame_count % 1000 == 0)

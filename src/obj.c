@@ -11,7 +11,6 @@ void parse_obj(const char *filename, mesh3 *mesh)
   GetModuleFileNameA(NULL, path, MAX_PATH);
   *strrchr(path, '\\') = '\0'; 
   snprintf(path, MAX_PATH, "%s\\..\\%s", path, filename);
-  puts(path);
   FILE *fp = fopen(path, "r");
   size_t v_capacity = 0;
   size_t t_capacity = 0;
