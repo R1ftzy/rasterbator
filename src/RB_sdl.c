@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <framebuffer.h>
+#include <stdlib.h>
 
 extern framebuffer fb;
 

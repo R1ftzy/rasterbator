@@ -19,9 +19,9 @@ void parse_obj(const char *filename, mesh3 *mesh)
   #ifdef _WIN32
   GetModuleFileNameA(NULL, path, MAX_PATH);
   #elif defined(__linux__)
-  readlink("/proc/self/exe", path, MAX_PATH);
+  readlink("/proc/self/exe", path, 260);
   #elif defined(__APPLE__)
-  // _NSGetExecutablePath(path, MAX_PATH);
+  // _NSGetExecutablePath(path, 260);
   #endif
   *strrchr(path, '\\') = '\0';
   snprintf(path, MAX_PATH, "%s\\..\\%s", path, filename);
