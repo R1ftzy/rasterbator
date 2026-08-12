@@ -4,25 +4,27 @@
 #include <string.h>
 
 #ifdef _WIN32
-    #include <windows.h>
+#include <windows.h>
 
 #elif defined(__linux__)
-    #include <unistd.h>
+#define MAX_PATH 260
+#include <unistd.h>
 
 #elif defined(__APPLE__)
-    #include <mach-o/dyld.h>
+#define MAX_PATH 260
+#include <mach-o/dyld.h>
 #endif
 
 void parse_obj(const char *filename, mesh3 *mesh)
 {
   char path[MAX_PATH];
-  #ifdef _WIN32
+#ifdef _WIN32
   GetModuleFileNameA(NULL, path, MAX_PATH);
-  #elif defined(__linux__)
-  readlink("/proc/self/exe", path, 260);
-  #elif defined(__APPLE__)
-  // _NSGetExecutablePath(path, 260);
-  #endif
+#elif defined(__linux__)
+  readlink("/proc/self/exe", path, MAX_PATH);
+#elif defined(__APPLE__)
+// _NSGetExecutablePath(path, MAX_PATH);
+#endif
   *strrchr(path, '\\') = '\0';
   snprintf(path, MAX_PATH, "%s\\..\\%s", path, filename);
   FILE *fp = fopen(path, "r");
