@@ -3,13 +3,27 @@
 #include "types.h"
 #include <string.h>
 
-#include <windows.h>
+#ifdef _WIN32
+    #include <windows.h>
+
+#elif defined(__linux__)
+    #include <unistd.h>
+
+#elif defined(__APPLE__)
+    #include <mach-o/dyld.h>
+#endif
 
 void parse_obj(const char *filename, mesh3 *mesh)
 {
   char path[MAX_PATH];
+  #ifdef _WIN32
   GetModuleFileNameA(NULL, path, MAX_PATH);
-  *strrchr(path, '\\') = '\0'; 
+  #elif defined(__linux__)
+  readlink("/proc/self/exe", path, MAX_PATH);
+  #elif defined(__APPLE__)
+  // _NSGetExecutablePath(path, MAX_PATH);
+  #endif
+  *strrchr(path, '\\') = '\0';
   snprintf(path, MAX_PATH, "%s\\..\\%s", path, filename);
   FILE *fp = fopen(path, "r");
   size_t v_capacity = 0;
@@ -48,7 +62,12 @@ void parse_obj(const char *filename, mesh3 *mesh)
       t_count++;
     }
   }
+  fclose(fp);
+
   mesh->count = t_count;
   mesh->tris = malloc(mesh->count * sizeof(tri3));
   memcpy(mesh->tris, tris, mesh->count * sizeof(tri3));
+
+  free(vertices);
+  free(tris);
 }
