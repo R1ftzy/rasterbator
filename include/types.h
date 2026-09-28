@@ -55,6 +55,7 @@ typedef struct
 {
   tri3 *tris;
   size_t count;
+  uint32_t color;
 } mesh3;
 
 typedef struct  

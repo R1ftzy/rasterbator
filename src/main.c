@@ -12,6 +12,7 @@
 #include "obj.h"
 #include "trans.h"
 #include "RB_windows.h"
+#include "SDL3/SDL.h"
 
 framebuffer fb;
 
@@ -29,9 +30,9 @@ typedef struct
 void init(scene *m)
 {
   init_cam(&m->cam);
-  m->cam.eye = (vec3){0, 2.0f, 8};
-  m->cam.target = (vec3){0, 0, 0};
-  m->light = (vec3){-1.0f, -0.5f, -2.0f};
+  m->cam.eye = (vec3){4.0f, 0, 7};
+  m->cam.target = (vec3){0, -1.0, 0};
+  m->light = (vec3){2.0f, 0.5f, 8.0f};
   RB_fill(&fb, rgb(183, 183, 183));
   tri3 tris[] = {
       {{{-5.0f, -1.2f, 5.0f}, {5.0f, -1.2f, 5.0f}, {-5.0f, -1.2f, -5.0f}}},
@@ -39,12 +40,15 @@ void init(scene *m)
   m->base.tris = malloc(sizeof(tris));
   memcpy(m->base.tris, tris, sizeof(tris));
   m->base.count = sizeof(tris) / sizeof(tris[0]);
-  parse_obj("assets/suzanne.obj", &m->suzanne);
+  m->base.color = rgb(38, 48, 43);
+  parse_obj("assets/Koenigsegg.obj", &m->suzanne);
   parse_obj("assets/icosphere.obj", &m->sphere);
-  translate_mesh3(&m->suzanne, 0, 0, 0);
+  m->sphere.color = rgb(233, 234, 172);
+  m->suzanne.color = rgb(239, 250, 251);
+  translate_mesh3(&m->suzanne, 1.0, -0.9f, 1.0);
   rotate_mesh3_euler(&m->suzanne, 90, 0, 0);
   scale_mesh3(&m->sphere, 0.2, 0.2, 0.2);
-  scale_mesh3(&m->suzanne, 1.2, 1.2, 1.2);
+  scale_mesh3(&m->suzanne, 0.7, 0.7, 0.7);
   translate_mesh3(&m->sphere, m->light.x, m->light.y, m->light.z);
   m->dt = 0;
   m->speed = 0.0;
@@ -52,22 +56,59 @@ void init(scene *m)
 
 void update(scene *m)
 {
-  m->speed += 1.75 * m->dt;
-  float r = 2.0f;
-  m->cam.eye = (vec3){-8 * cosf(m->speed), sinf(m->speed * 2) + 3.0f, 8 * sinf(m->speed)};
+  m->speed += 1.2 * m->dt;
+  float r = 4.0f;
+  // m->cam.eye = (vec3){-8 * cosf(m->speed), sinf(m->speed * 2) + 3.0f, 8 * sinf(m->speed)};
 
-  vec3 prev_light = m->light;
-  m->light = (vec3){r * cosf(2 * m->speed), 0.0f, r * sinf(2 * m->speed)};
-  translate_mesh3(&m->sphere, m->light.x - prev_light.x, m->light.y - prev_light.y, m->light.z - prev_light.z);
+  // vec3 prev_light = m->light;
+  m->light = (vec3){r * cosf(2 * m->speed), 0.2, r * sinf(2 * m->speed)};
+  // translate_mesh3(&m->sphere, m->light.x - prev_light.x, m->light.y - prev_light.y, m->light.z - prev_light.z);
   rotate_mesh3_euler(&m->sphere, 0.0f, 15 * m->dt, 0.0f);
   clear_framebuffer(&fb, rgb(183, 183, 183));
   // rotate_mesh3_euler(&m->suzanne, 0, 60 * m->dt, 0);
   float prev_sin = sinf(m->speed - 2 * m->dt);
   float curr_sin = sinf(m->speed);
   // translate_mesh3(&m->suzanne, 0, 0, 0.5 * (curr_sin - prev_sin));
-  RB_draw_mesh3d(&fb, &m->cam, m->base, m->light, rgb(140, 183, 76));
-  RB_draw_mesh3d(&fb, &m->cam, m->suzanne, m->light, rgb(187, 126, 45));
-  RB_draw_mesh3d(&fb, &m->cam, m->sphere, m->light, rgb(233, 234, 172));
+
+  // RB_draw_mesh3d(&fb, &m->cam, m->base, m->light, rgb(38, 48, 43));
+  // RB_draw_mesh3d(&fb, &m->cam, m->suzanne, m->light, rgb(239, 250, 251));
+  // RB_draw_mesh3d(&fb, &m->cam, m->sphere, m->light, rgb(233, 234, 172));
+
+  mesh3 *meshes[] = {
+      &m->base,
+      &m->suzanne,
+      &m->sphere};
+
+  int mesh_count = sizeof(meshes) / sizeof(meshes[0]);
+
+  SDL_Thread *threads[THREAD_COUNT];
+  mt_mesh_args args[THREAD_COUNT];
+
+  int band_height = fb.height / THREAD_COUNT;
+
+  for (int i = 0; i < THREAD_COUNT; i++)
+  {
+    args[i].fb = &fb;
+    args[i].cam = &m->cam;
+    args[i].meshes = meshes;
+    args[i].mesh_count = mesh_count;
+    args[i].light = m->light;
+
+    args[i].y_min = i * band_height;
+    args[i].y_max = (i == THREAD_COUNT - 1)
+                        ? fb.height - 1
+                        : (i + 1) * band_height - 1;
+
+    threads[i] = SDL_CreateThread(
+        render_worker,
+        "RenderWorker",
+        &args[i]);
+  }
+
+  for (int i = 0; i < THREAD_COUNT; i++)
+  {
+    SDL_WaitThread(threads[i], NULL);
+  }
 }
 
 int main()

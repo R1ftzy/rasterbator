@@ -10,10 +10,8 @@ CW is followed for drawing tris
 #include "config.h"
 #include "types.h"
 #include "color.h"
-
-#define MIN(a, b) (((a) < (b)) ? (a) : (b))
-#define MAX(a, b) (((a) > (b)) ? (a) : (b))
-#define LERP(a, b, t) ((a) * (1.0f - (t)) + (b) * (t))
+#include "draw.h"
+#include "SDL3/SDL.h"
 
 void RB_fill(framebuffer *fb, uint32_t color)
 {
@@ -202,13 +200,8 @@ void RB_tri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
   drawLine3d(fb, vi2, vi0, color, o2.z, o0.z);
 }
 
-void RB_fill_tri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
+void RB_fill_tri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color, int tile_y_min, int tile_y_max, mat4 view)
 {
-  // mat4 view = look_at_matrix(cam);
-  // mat4 matProj = cam_proj(cam);
-
-  mat4 view = update_view(cam);
-
   vec4 v0 = VEC3_TO_VEC4(tri.v[0]);
   vec4 v1 = VEC3_TO_VEC4(tri.v[1]);
   vec4 v2 = VEC3_TO_VEC4(tri.v[2]);
@@ -216,15 +209,6 @@ void RB_fill_tri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
   vec4 o0 = mat4_mul_vec4(view, v0);
   vec4 o1 = mat4_mul_vec4(view, v1);
   vec4 o2 = mat4_mul_vec4(view, v2);
-
-
-  // vec4 l0 = mat4_mul_vec4(view, v0);
-  // vec4 l1 = mat4_mul_vec4(view, v1);
-  // vec4 l2 = mat4_mul_vec4(view, v2);
-
-  // vec4 o0 = mat4_mul_vec4(matProj, l0);
-  // vec4 o1 = mat4_mul_vec4(matProj, l1);
-  // vec4 o2 = mat4_mul_vec4(matProj, l2);
 
   if (o0.w < cam->fnear.d || o1.w < cam->fnear.d || o2.w < cam->fnear.d)
   {
@@ -250,9 +234,9 @@ void RB_fill_tri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
 
   // Finds the bounding box with all candidate pixels
   int x_min = MAX(MIN(MIN(tri2d.v[0].x, tri2d.v[1].x), tri2d.v[2].x), 0);
-  int y_min = MAX(MIN(MIN(tri2d.v[0].y, tri2d.v[1].y), tri2d.v[2].y), 0);
+  int y_min = MAX(MIN(MIN(tri2d.v[0].y, tri2d.v[1].y), tri2d.v[2].y), tile_y_min);
   int x_max = MIN(MAX(MAX(tri2d.v[0].x, tri2d.v[1].x), tri2d.v[2].x), fb->width - 1);
-  int y_max = MIN(MAX(MAX(tri2d.v[0].y, tri2d.v[1].y), tri2d.v[2].y), fb->height - 1);
+  int y_max = MIN(MAX(MAX(tri2d.v[0].y, tri2d.v[1].y), tri2d.v[2].y), tile_y_max);
   // Compute the constant delta_s that will be used for the horizontal and vertical steps
   int delta_w0_col = (tri2d.v[1].y - tri2d.v[2].y);
   int delta_w1_col = (tri2d.v[2].y - tri2d.v[0].y);
@@ -298,28 +282,70 @@ void RB_fill_tri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
   }
 }
 
-void RB_draw_mesh3d(framebuffer *fb, camera *cam, mesh3 mesh, vec3 light, uint32_t color)
+// void RB_draw_mesh3d(framebuffer *fb, camera *cam, mesh3 mesh, vec3 light, uint32_t color)
+// {
+//   uint8_t red = (color >> 16) & 0xFF;
+//   uint8_t green = (color >> 8) & 0xFF;
+//   uint8_t blue = color & 0xFF;
+//   for (size_t i = 0; i < mesh.count; i++)
+//   {
+//     vec3 normal = vec3_normalize(vec3_cross(vec3_sub(mesh.tris[i].v[1], mesh.tris[i].v[0]), vec3_sub(mesh.tris[i].v[2], mesh.tris[i].v[0])));
+//     vec3 los = vec3_sub(mesh.tris[i].v[0], cam->eye);
+//     if (vec3_dot(los, normal) >= 0)
+//       continue;
+
+//     vec3 face_centre = vec3_add(vec3_add(mesh.tris[i].v[0], mesh.tris[i].v[1]), mesh.tris[i].v[2]);
+
+//     face_centre.x /= 3;
+//     face_centre.y /= 3;
+//     face_centre.z /= 3;
+
+//     vec3 light_dir = vec3_sub(light, face_centre);
+
+//     float intensity = vec3_dot(normal, vec3_normalize(light_dir));
+//     intensity = (intensity < 0) ? 0.0f : intensity;
+//     RB_fill_tri3d(fb, cam, mesh.tris[i], rgb(red * intensity, green * intensity, blue * intensity), 0, fb->height - 1);
+//   }
+// }
+
+int render_worker(void *arg)
 {
-  uint8_t red = (color >> 16) & 0xFF;
-  uint8_t green = (color >> 8) & 0xFF;
-  uint8_t blue = color & 0xFF;
-  for (size_t i = 0; i < mesh.count; i++)
+  mt_mesh_args *args = arg;
+
+  for (int m = 0; m < args->mesh_count; m++)
   {
-    vec3 normal = vec3_normalize(vec3_cross(vec3_sub(mesh.tris[i].v[1], mesh.tris[i].v[0]), vec3_sub(mesh.tris[i].v[2], mesh.tris[i].v[0])));
-    vec3 los = vec3_sub(mesh.tris[i].v[0], cam->eye);
-    if (vec3_dot(los, normal) >= 0)
-      continue;
+    mesh3 *mesh = args->meshes[m];
+    uint8_t red = (mesh->color >> 16) & 0xFF;
+    uint8_t green = (mesh->color >> 8) & 0xFF;
+    uint8_t blue = mesh->color & 0xFF;
+    mat4 view = update_view(args->cam);
+    for (size_t i = 0; i < mesh->count; i++)
+    {
+      vec3 normal = vec3_normalize(vec3_cross(vec3_sub(mesh->tris[i].v[1], mesh->tris[i].v[0]), vec3_sub(mesh->tris[i].v[2], mesh->tris[i].v[0])));
+      vec3 los = vec3_sub(mesh->tris[i].v[0], args->cam->eye);
+      if (vec3_dot(los, normal) >= 0)
+        continue;
 
-    vec3 face_centre = vec3_add(vec3_add(mesh.tris[i].v[0], mesh.tris[i].v[1]), mesh.tris[i].v[2]);
+      vec3 face_centre = vec3_add(vec3_add(mesh->tris[i].v[0], mesh->tris[i].v[1]), mesh->tris[i].v[2]);
 
-    face_centre.x /= 3;
-    face_centre.y /= 3;
-    face_centre.z /= 3;
+      face_centre.x /= 3;
+      face_centre.y /= 3;
+      face_centre.z /= 3;
 
-    vec3 light_dir = vec3_sub(light, face_centre);
+      vec3 light_dir = vec3_sub(args->light, face_centre);
 
-    float intensity = vec3_dot(normal, vec3_normalize(light_dir));
-    intensity = (intensity < 0) ? 0.0f : intensity;
-    RB_fill_tri3d(fb, cam, mesh.tris[i], rgb(red * intensity, green * intensity, blue * intensity));
+      float intensity = vec3_dot(normal, vec3_normalize(light_dir));
+      intensity = (intensity < 0) ? 0.0f : intensity;
+
+      RB_fill_tri3d(
+          args->fb,
+          args->cam,
+          mesh->tris[i],
+          rgb(red * intensity, green * intensity, blue * intensity),
+          args->y_min,
+          args->y_max,
+          view);
+    }
   }
+  return 0;
 }

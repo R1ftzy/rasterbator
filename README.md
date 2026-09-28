@@ -15,6 +15,9 @@ Two platform layers are available: Win32 (default, no extra files!) and SDL3 (cr
 
 ### Win32
 
+> [!IMPORTANT]
+> CURRENTLY BROKEN
+
 ```sh
 make          # optimized
 make debug    # debug symbols
