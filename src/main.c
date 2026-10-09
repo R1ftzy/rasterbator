@@ -12,7 +12,7 @@
 #include "obj.h"
 #include "trans.h"
 #include "RB_windows.h"
-#include "SDL3/SDL.h"
+#include "thread_pool.h"
 
 framebuffer fb;
 
@@ -81,34 +81,8 @@ void update(scene *m)
 
   int mesh_count = sizeof(meshes) / sizeof(meshes[0]);
 
-  SDL_Thread *threads[THREAD_COUNT];
-  mt_mesh_args args[THREAD_COUNT];
-
-  int band_height = fb.height / THREAD_COUNT;
-
-  for (int i = 0; i < THREAD_COUNT; i++)
-  {
-    args[i].fb = &fb;
-    args[i].cam = &m->cam;
-    args[i].meshes = meshes;
-    args[i].mesh_count = mesh_count;
-    args[i].light = m->light;
-
-    args[i].y_min = i * band_height;
-    args[i].y_max = (i == THREAD_COUNT - 1)
-                        ? fb.height - 1
-                        : (i + 1) * band_height - 1;
-
-    threads[i] = SDL_CreateThread(
-        render_worker,
-        "RenderWorker",
-        &args[i]);
-  }
-
-  for (int i = 0; i < THREAD_COUNT; i++)
-  {
-    SDL_WaitThread(threads[i], NULL);
-  }
+  render_pool pool;
+  rb_pool_render(&pool, &fb, &m->cam, meshes, mesh_count, m->light);
 }
 
 int main()

@@ -19,7 +19,7 @@ Two platform layers are available: Win32 (default, no extra files!) and SDL3 (cr
 > CURRENTLY BROKEN
 
 ```sh
-make          # optimized
+make win         # optimized
 make debug    # debug symbols
 ```
 
@@ -41,7 +41,7 @@ Requires SDL ofc. but you need to drop the files in manually:
 3. to build
 
 ```sh
-make sdl
+make
 ```
 
 ## Usage

@@ -1,7 +1,7 @@
 CC       = gcc
 TARGET   = raster
 
-SRC      = src/main.c src/framebuffer.c src/draw.c src/color.c src/vecmath.c src/camera.c src/obj.c src/trans.c
+SRC      = src/main.c src/framebuffer.c src/draw.c src/color.c src/vecmath.c src/camera.c src/obj.c src/trans.c src/thread_pool.c
 DEBUG_FLAGS  = -O0 -g -Wall -Wextra -Iinclude
 RELEASE_FLAGS = -O3 -march=native -Iinclude
 WIN_SRC  = $(SRC) src/RB_windows.c
@@ -17,11 +17,11 @@ debug:
 	mkdir -p bin
 	$(CC) $(DEBUG_FLAGS) $(WIN_SRC) $(WIN_LDFLAGS) -o bin/$(TARGET)
 
-release:
+win:
 	mkdir -p bin
 	$(CC) $(RELEASE_FLAGS) $(WIN_SRC) $(WIN_LDFLAGS) -o bin/$(TARGET)
 
-sdl:
+release:
 	mkdir -p bin
 	$(CC) $(RELEASE_FLAGS) $(SDL_CFLAGS) $(SDL_SRC) $(SDL_LDFLAGS) -o bin/$(TARGET)
 	cp external/SDL3/bin/SDL3.dll bin/
