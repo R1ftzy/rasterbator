@@ -148,10 +148,40 @@ if(RASTERBATOR_BACKEND STREQUAL "win32")
 endif()
 
 # ---------------------------------------------------------------------------
+# Release optimizations
+# ---------------------------------------------------------------------------
+
+include(CheckIPOSupported)
+check_ipo_supported(RESULT RB_IPO_SUPPORTED OUTPUT RB_IPO_ERROR)
+
+function(rb_enable_optimizations target)
+  if(CMAKE_C_COMPILER_ID STREQUAL "GNU"
+      OR (CMAKE_C_COMPILER_ID MATCHES "Clang" AND NOT MSVC))
+    target_compile_options(${target} PRIVATE
+      $<$<CONFIG:Release>:-O3>
+      $<$<CONFIG:Release>:-march=native>
+    )
+
+  elseif(MSVC)
+    target_compile_options(${target} PRIVATE
+      $<$<CONFIG:Release>:/O2>
+    )
+  endif()
+
+  if(RB_IPO_SUPPORTED)
+    set_property(TARGET ${target} PROPERTY
+      INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
+  endif()
+endfunction()
+
+rb_enable_optimizations(rasterbator)
+
+# ---------------------------------------------------------------------------
 # Example
 # ---------------------------------------------------------------------------
 if(RASTERBATOR_BUILD_EXAMPLES)
   add_executable(cartest tests/cartest.c)
+  rb_enable_optimizations(cartest)
   target_link_libraries(cartest PRIVATE rasterbator)
 
   if(RASTERBATOR_BACKEND STREQUAL "win32")
