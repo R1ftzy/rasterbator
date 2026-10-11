@@ -3,7 +3,7 @@
 #include <math.h>
 #include <stdio.h>
 
-void RB_applyTransformation(mesh3 *mesh, mat4 mat)
+static void RB_applyTransformation(mesh3 *mesh, mat4 mat)
 {
   for (size_t i = 0; i < mesh->count; i++)
   {

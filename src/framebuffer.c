@@ -18,6 +18,7 @@ void RB_set_pixel(framebuffer *fb, int x, int y, uint32_t color, float depth)
     }
   }
 }
+
 void RB_clear_depth(framebuffer *fb)
 {
   for (int i = 0; i < fb->width * fb->height; i++)
@@ -25,6 +26,7 @@ void RB_clear_depth(framebuffer *fb)
     fb->depth[i] = 1.0f;
   }
 }
+
 void RB_clear_framebuffer(framebuffer *fb, uint32_t color)
 {
   for (int i = 0; i < fb->width * fb->height; i++)
@@ -33,12 +35,11 @@ void RB_clear_framebuffer(framebuffer *fb, uint32_t color)
     fb->depth[i] = 1.0f;
   }
 }
+
 void RB_init_framebuffer(framebuffer *fb)
 {
   fb->width = SCREEN_WIDTH;
   fb->height = SCREEN_HEIGHT;
-  // fb->pixels = malloc(fb->width * fb->height * sizeof(uint32_t));
-  // memset(fb->pixels, 0, fb->width * fb->height * sizeof(uint32_t));
   fb->pixels = NULL;
   fb->depth = malloc(fb->width * fb->height * sizeof(float));
   RB_clear_depth(fb);

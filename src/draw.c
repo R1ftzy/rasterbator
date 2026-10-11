@@ -11,7 +11,6 @@ CW is followed for drawing tris
 #include "types.h"
 #include "color.h"
 #include "draw.h"
-#include "SDL3/SDL.h"
 
 void RB_fill(framebuffer *fb, uint32_t color)
 {
@@ -99,7 +98,7 @@ void RB_tri2d(framebuffer *fb, tri2 tri, uint32_t color)
   RB_line2d(fb, tri.v[1], tri.v[2], color);
 }
 
-bool RB_is_top_left(vec2i *start, vec2i *end)
+static bool RB_is_top_left(vec2i *start, vec2i *end)
 {
   vec2i edge = {end->x - start->x, end->y - start->y};
   bool is_top_edge = edge.y == 0 && edge.x > 0;
@@ -107,7 +106,7 @@ bool RB_is_top_left(vec2i *start, vec2i *end)
   return is_left_edge || is_top_edge;
 }
 
-int RB_edge_cross(vec2i *a, vec2i *b, vec2i *p)
+static int RB_edge_cross(vec2i *a, vec2i *b, vec2i *p)
 {
   vec2i ab = {b->x - a->x, b->y - a->y};
   vec2i ap = {p->x - a->x, p->y - a->y};

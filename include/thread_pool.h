@@ -19,6 +19,7 @@ typedef struct
 } render_pool;
 
 bool RB_pool_init(render_pool *pool);
+// Creates SDL threads for drawing a scene
 void RB_pool_render(render_pool *pool, framebuffer *fb, camera *cam, mesh3 **meshes, int mesh_count, vec3 light);
 void RB_pool_destroy(render_pool *pool);
 
