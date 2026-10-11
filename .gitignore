@@ -1,6 +1,7 @@
 /bin
 /build
 /build-win
+/build-clang
 *.exe
 *.ppm
 old
