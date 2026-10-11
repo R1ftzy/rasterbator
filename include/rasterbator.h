@@ -9,6 +9,7 @@
 #include "obj.h"
 #include "draw.h"
 #include "framebuffer.h"
+#include "render.h"
 #include "RB_windows.h"
 
 #endif

@@ -63,6 +63,7 @@ void RB_set_title(const char* title)
 
 extern int main();
 
+#ifdef RASTERBATOR_WIN32_ENTRY
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
   // model m;
@@ -106,6 +107,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
   QueryPerformanceCounter(&lastTickCount);
   return main();
 }
+#endif
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {

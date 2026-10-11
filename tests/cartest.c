@@ -3,9 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "rasterbator.h"
-#include "thread_pool.h"
-
-extern framebuffer fb;
 
 typedef struct
 {
@@ -72,8 +69,7 @@ void RB_update(scene *m)
 
   int mesh_count = sizeof(meshes) / sizeof(meshes[0]);
 
-  render_pool pool;
-  RB_pool_render(&pool, &fb, &m->cam, meshes, mesh_count, m->light);
+  RB_draw_meshes(meshes, mesh_count, &m->cam, m->light);
 }
 
 int main()

@@ -1,28 +1,29 @@
-CC       = gcc
-TARGET   = raster
+# Thin wrapper around CMake, which is the source of truth (see CMakeLists.txt).
+# BACKEND selects the window backend: sdl (default) or win32.
 
-SRC      = src/framebuffer.c src/draw.c src/color.c src/vecmath.c src/camera.c src/obj.c src/trans.c src/thread_pool.c
-TEST_SRC = tests/cartest.c
-DEBUG_FLAGS  = -O0 -g -Wall -Wextra -Iinclude
-RELEASE_FLAGS = -O3 -march=native -Iinclude
-WIN_SRC  = $(SRC) $(TEST_SRC) src/RB_windows.c
-SDL_SRC  = $(SRC) $(TEST_SRC) src/RB_sdl.c
-WIN_LDFLAGS = -mwindows -municode -lgdi32 -luser32
-
-SDL_CFLAGS  = -Iinclude -Iexternal/SDL3/include
-SDL_LDFLAGS = -Lexternal/SDL3/lib -lSDL3
+CMAKE   ?= cmake
+BUILD   ?= build
+BACKEND ?= sdl
 
 all: release
 
+release:
+	$(CMAKE) -B $(BUILD) -DCMAKE_BUILD_TYPE=Release -DRASTERBATOR_BACKEND=$(BACKEND)
+	$(CMAKE) --build $(BUILD) --config Release
+
 debug:
-	mkdir -p bin
-	$(CC) $(DEBUG_FLAGS) $(WIN_SRC) $(WIN_LDFLAGS) -o bin/$(TARGET)
+	$(CMAKE) -B $(BUILD) -DCMAKE_BUILD_TYPE=Debug -DRASTERBATOR_BACKEND=$(BACKEND)
+	$(CMAKE) --build $(BUILD) --config Debug
 
 win:
-	mkdir -p bin
-	$(CC) $(RELEASE_FLAGS) $(WIN_SRC) $(WIN_LDFLAGS) -o bin/$(TARGET)
+	$(CMAKE) -B build-win -DRASTERBATOR_BACKEND=win32 -DCMAKE_BUILD_TYPE=Release
+	$(CMAKE) --build build-win --config Release
 
-release:
-	mkdir -p bin
-	$(CC) $(RELEASE_FLAGS) $(SDL_CFLAGS) $(SDL_SRC) $(SDL_LDFLAGS) -o bin/$(TARGET)
-	cp external/SDL3/bin/SDL3.dll bin/
+run: release
+	./bin/cartest
+
+clean:
+	$(CMAKE) -E rm -rf $(BUILD) build-win
+	$(CMAKE) -E rm -f bin/cartest bin/cartest.exe bin/SDL3.dll
+
+.PHONY: all release debug win run clean
