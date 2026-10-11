@@ -3,14 +3,14 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-bool is_running();
+bool RB_is_running();
 
 void RB_create_window();
 
 void RB_set_title(const char *title);
 
-uint64_t get_delta_time();
+uint64_t RB_get_delta_time();
 
-void draw_frame();
+void RB_draw_frame();
 
 #endif

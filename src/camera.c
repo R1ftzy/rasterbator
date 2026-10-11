@@ -10,7 +10,7 @@ forward is -Z
 #include "config.h"
 #include <math.h>
 
-void init_cam(camera *cam)
+void RB_init_cam(camera *cam)
 {
   cam->eye = (vec3){0, 0, 0};
   cam->up = (vec3){0, 1, 0};
@@ -23,7 +23,7 @@ void init_cam(camera *cam)
   cam->aspect = (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT;
 }
 
-mat4 cam_proj(camera *cam)
+mat4 RB_cam_proj(camera *cam)
 {
   mat4 matProj = {0};
   float FovRad = 1.0f / tanf(0.5f * DEG_TO_RAD(cam->fov));
@@ -38,11 +38,11 @@ mat4 cam_proj(camera *cam)
   return matProj;
 }
 
-mat4 look_at_matrix(camera *cam)
+mat4 RB_look_at_matrix(camera *cam)
 {
-  vec3 forward = vec3_normalize(vec3_sub(cam->target, cam->eye));
-  vec3 right = vec3_normalize(vec3_cross(cam->up, forward));
-  vec3 up = vec3_normalize(vec3_cross(forward, right));
+  vec3 forward = RB_vec3_normalize(RB_vec3_sub(cam->target, cam->eye));
+  vec3 right = RB_vec3_normalize(RB_vec3_cross(cam->up, forward));
+  vec3 up = RB_vec3_normalize(RB_vec3_cross(forward, right));
 
   mat4 look = {0};
 
@@ -58,16 +58,16 @@ mat4 look_at_matrix(camera *cam)
   look.m[2][1] = forward.y;
   look.m[2][2] = forward.z;
 
-  look.m[0][3] = -vec3_dot(right, cam->eye);
-  look.m[1][3] = -vec3_dot(up, cam->eye);
-  look.m[2][3] = -vec3_dot(forward, cam->eye);
+  look.m[0][3] = -RB_vec3_dot(right, cam->eye);
+  look.m[1][3] = -RB_vec3_dot(up, cam->eye);
+  look.m[2][3] = -RB_vec3_dot(forward, cam->eye);
 
   look.m[3][3] = 1;
 
   return look;
 }
 
-mat4 update_view(camera *cam){
-  mat4 M = mat4_mul_mat4(cam_proj(cam), look_at_matrix(cam));
+mat4 RB_update_view(camera *cam){
+  mat4 M = RB_mat4_mul_mat4(RB_cam_proj(cam), RB_look_at_matrix(cam));
   return M;
 }

@@ -18,8 +18,8 @@ typedef struct
   bool shutdown;
 } render_pool;
 
-bool rb_pool_init(render_pool *pool);
-void rb_pool_render(render_pool *pool, framebuffer *fb, camera *cam, mesh3 **meshes, int mesh_count, vec3 light);
-void rb_pool_destroy(render_pool *pool);
+bool RB_pool_init(render_pool *pool);
+void RB_pool_render(render_pool *pool, framebuffer *fb, camera *cam, mesh3 **meshes, int mesh_count, vec3 light);
+void RB_pool_destroy(render_pool *pool);
 
 #endif

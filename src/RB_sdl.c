@@ -20,7 +20,7 @@ void RB_set_title(const char *title)
 
 uint64_t ticksPerSecond, lastTickCount;
 
-uint64_t get_delta_time()
+uint64_t RB_get_delta_time()
 {
   uint64_t currentTickCount = SDL_GetPerformanceCounter();
   uint64_t elapsedTicks = currentTickCount - lastTickCount;
@@ -29,7 +29,7 @@ uint64_t get_delta_time()
   lastTickCount = currentTickCount;
   return elapsedTimeInMicroseconds;
 }
-bool is_running()
+bool RB_is_running()
 {
   while (SDL_PollEvent(&event))
   {
@@ -42,7 +42,7 @@ bool is_running()
   }
   return true;
 }
-void draw_frame()
+void RB_draw_frame()
 {
   SDL_UpdateTexture(
       texture,
@@ -56,7 +56,7 @@ void draw_frame()
 
 void RB_create_window()
 {
-  init_framebuffer(&fb);
+  RB_init_framebuffer(&fb);
   fb.pixels = malloc(fb.width * fb.height * sizeof(uint32_t));
   SDL_Init(SDL_INIT_VIDEO);
   float scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());

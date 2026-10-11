@@ -1,6 +1,6 @@
 #include "thread_pool.h"
 
-bool rb_pool_init(render_pool *pool)
+bool RB_pool_init(render_pool *pool)
 {
   pool->mutex = SDL_CreateMutex();
   pool->work_available = SDL_CreateCondition();
@@ -13,22 +13,22 @@ bool rb_pool_init(render_pool *pool)
   for (int i = 0; i < THREAD_COUNT; i++)
   {
     pool->threads[i] = SDL_CreateThread(
-        render_worker,
+        RB_render_worker,
         "RenderWorker",
         &pool->args[i]);
     if (!pool->threads[i])
     {
-      rb_pool_destroy(pool);
+      RB_pool_destroy(pool);
       return false;
     }
   }
   return true;
 }
-void rb_pool_destroy(render_pool *pool)
+void RB_pool_destroy(render_pool *pool)
 {
 }
 
-void rb_pool_render(render_pool *pool, framebuffer *fb, camera *cam, mesh3 **meshes, int mesh_count, vec3 light)
+void RB_pool_render(render_pool *pool, framebuffer *fb, camera *cam, mesh3 **meshes, int mesh_count, vec3 light)
 {
   int band_height = fb->height / THREAD_COUNT;
 
@@ -46,7 +46,7 @@ void rb_pool_render(render_pool *pool, framebuffer *fb, camera *cam, mesh3 **mes
                               : (i + 1) * band_height - 1;
 
     pool->threads[i] = SDL_CreateThread(
-        render_worker,
+        RB_render_worker,
         "RenderWorker",
         &pool->args[i]);
   }

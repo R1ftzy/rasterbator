@@ -15,7 +15,7 @@
 #include <mach-o/dyld.h>
 #endif
 
-void parse_obj(const char *filename, mesh3 *mesh)
+void RB_parse_obj(const char *filename, mesh3 *mesh)
 {
   char path[MAX_PATH];
 #ifdef _WIN32

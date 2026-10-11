@@ -35,7 +35,7 @@ void RB_line2d(framebuffer *fb, vec2i A, vec2i B, uint32_t color)
   int error = dx + dy;
   while (1)
   {
-    set_pixel(fb, x0, y0, color, 0.0f);
+    RB_set_pixel(fb, x0, y0, color, 0.0f);
     int e2 = 2 * error;
     if (e2 >= dy)
     {
@@ -54,7 +54,7 @@ void RB_line2d(framebuffer *fb, vec2i A, vec2i B, uint32_t color)
   }
 }
 
-void drawLine3d(framebuffer *fb, vec2i A, vec2i B, uint32_t color, float d0, float d1)
+void RB_drawLine3d(framebuffer *fb, vec2i A, vec2i B, uint32_t color, float d0, float d1)
 {
   int x0, x1, y0, y1;
   x0 = A.x;
@@ -73,7 +73,7 @@ void drawLine3d(framebuffer *fb, vec2i A, vec2i B, uint32_t color, float d0, flo
     float t = (steps > 0) ? (float)i / (float)steps : 0.0f;
     i++;
     float depth = LERP(d0, d1, t);
-    set_pixel(fb, x0, y0, color, depth);
+    RB_set_pixel(fb, x0, y0, color, depth);
     int e2 = 2 * error;
     if (e2 >= dy)
     {
@@ -99,7 +99,7 @@ void RB_tri2d(framebuffer *fb, tri2 tri, uint32_t color)
   RB_line2d(fb, tri.v[1], tri.v[2], color);
 }
 
-bool is_top_left(vec2i *start, vec2i *end)
+bool RB_is_top_left(vec2i *start, vec2i *end)
 {
   vec2i edge = {end->x - start->x, end->y - start->y};
   bool is_top_edge = edge.y == 0 && edge.x > 0;
@@ -107,7 +107,7 @@ bool is_top_left(vec2i *start, vec2i *end)
   return is_left_edge || is_top_edge;
 }
 
-int edge_cross(vec2i *a, vec2i *b, vec2i *p)
+int RB_edge_cross(vec2i *a, vec2i *b, vec2i *p)
 {
   vec2i ab = {b->x - a->x, b->y - a->y};
   vec2i ap = {p->x - a->x, p->y - a->y};
@@ -130,15 +130,15 @@ void RB_fill_tri2d(framebuffer *fb, tri2 tri, uint32_t color)
   int delta_w2_row = (tri.v[1].x - tri.v[0].x);
 
   // Rasterization RB_fill convention (top-left rule)
-  int bias0 = is_top_left(&tri.v[1], &tri.v[2]) ? 0 : -1;
-  int bias1 = is_top_left(&tri.v[2], &tri.v[0]) ? 0 : -1;
-  int bias2 = is_top_left(&tri.v[0], &tri.v[1]) ? 0 : -1;
+  int bias0 = RB_is_top_left(&tri.v[1], &tri.v[2]) ? 0 : -1;
+  int bias1 = RB_is_top_left(&tri.v[2], &tri.v[0]) ? 0 : -1;
+  int bias2 = RB_is_top_left(&tri.v[0], &tri.v[1]) ? 0 : -1;
 
   // Compute the edge functions for the fist (top-left) point
   vec2i p0 = {x_min, y_min};
-  int w0_row = edge_cross(&tri.v[1], &tri.v[2], &p0) + bias0;
-  int w1_row = edge_cross(&tri.v[2], &tri.v[0], &p0) + bias1;
-  int w2_row = edge_cross(&tri.v[0], &tri.v[1], &p0) + bias2;
+  int w0_row = RB_edge_cross(&tri.v[1], &tri.v[2], &p0) + bias0;
+  int w1_row = RB_edge_cross(&tri.v[2], &tri.v[0], &p0) + bias1;
+  int w2_row = RB_edge_cross(&tri.v[0], &tri.v[1], &p0) + bias2;
   // Loop all candidate pixels inside the bounding box
   for (int y = y_min; y <= y_max; y++)
   {
@@ -150,7 +150,7 @@ void RB_fill_tri2d(framebuffer *fb, tri2 tri, uint32_t color)
       bool is_inside = w0 >= 0 && w1 >= 0 && w2 >= 0;
       if (is_inside)
       {
-        set_pixel(fb, x, y, color, 0.0f);
+        RB_set_pixel(fb, x, y, color, 0.0f);
       }
       w0 += delta_w0_col;
       w1 += delta_w1_col;
@@ -164,20 +164,20 @@ void RB_fill_tri2d(framebuffer *fb, tri2 tri, uint32_t color)
 
 void RB_tri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
 {
-  // mat4 view = look_at_matrix(cam);
-  // mat4 matProj = cam_proj(cam);
-  mat4 view = update_view(cam);
+  // mat4 view = RB_look_at_matrix(cam);
+  // mat4 matProj = RB_cam_proj(cam);
+  mat4 view = RB_update_view(cam);
   vec4 v0 = VEC3_TO_VEC4(tri.v[0]);
   vec4 v1 = VEC3_TO_VEC4(tri.v[1]);
   vec4 v2 = VEC3_TO_VEC4(tri.v[2]);
 
-  vec4 o0 = mat4_mul_vec4(view, v0);
-  vec4 o1 = mat4_mul_vec4(view, v1);
-  vec4 o2 = mat4_mul_vec4(view, v2);
+  vec4 o0 = RB_mat4_mul_vec4(view, v0);
+  vec4 o1 = RB_mat4_mul_vec4(view, v1);
+  vec4 o2 = RB_mat4_mul_vec4(view, v2);
 
-  // vec4 o0 = mat4_mul_vec4(matProj, l0);
-  // vec4 o1 = mat4_mul_vec4(matProj, l1);
-  // vec4 o2 = mat4_mul_vec4(matProj, l2);
+  // vec4 o0 = RB_mat4_mul_vec4(matProj, l0);
+  // vec4 o1 = RB_mat4_mul_vec4(matProj, l1);
+  // vec4 o2 = RB_mat4_mul_vec4(matProj, l2);
 
   o0.x /= o0.w;
   o0.y /= o0.w;
@@ -195,9 +195,9 @@ void RB_tri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color)
   vec2i vi1 = {(int)((o1.x + 1.0f) * 0.5f * SCREEN_WIDTH), (int)((1.0f - o1.y) * 0.5f * SCREEN_HEIGHT)};
   vec2i vi2 = {(int)((o2.x + 1.0f) * 0.5f * SCREEN_WIDTH), (int)((1.0f - o2.y) * 0.5f * SCREEN_HEIGHT)};
 
-  drawLine3d(fb, vi0, vi1, color, o0.z, o1.z);
-  drawLine3d(fb, vi1, vi2, color, o1.z, o2.z);
-  drawLine3d(fb, vi2, vi0, color, o2.z, o0.z);
+  RB_drawLine3d(fb, vi0, vi1, color, o0.z, o1.z);
+  RB_drawLine3d(fb, vi1, vi2, color, o1.z, o2.z);
+  RB_drawLine3d(fb, vi2, vi0, color, o2.z, o0.z);
 }
 
 void RB_fill_tri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color, int tile_y_min, int tile_y_max, mat4 view)
@@ -206,9 +206,9 @@ void RB_fill_tri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color, int t
   vec4 v1 = VEC3_TO_VEC4(tri.v[1]);
   vec4 v2 = VEC3_TO_VEC4(tri.v[2]);
 
-  vec4 o0 = mat4_mul_vec4(view, v0);
-  vec4 o1 = mat4_mul_vec4(view, v1);
-  vec4 o2 = mat4_mul_vec4(view, v2);
+  vec4 o0 = RB_mat4_mul_vec4(view, v0);
+  vec4 o1 = RB_mat4_mul_vec4(view, v1);
+  vec4 o2 = RB_mat4_mul_vec4(view, v2);
 
   if (o0.w < cam->fnear.d || o1.w < cam->fnear.d || o2.w < cam->fnear.d)
   {
@@ -246,15 +246,15 @@ void RB_fill_tri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color, int t
   int delta_w2_row = (tri2d.v[1].x - tri2d.v[0].x);
 
   // Rasterization RB_fill convention (top-left rule)
-  int bias0 = is_top_left(&tri2d.v[1], &tri2d.v[2]) ? 0 : -1;
-  int bias1 = is_top_left(&tri2d.v[2], &tri2d.v[0]) ? 0 : -1;
-  int bias2 = is_top_left(&tri2d.v[0], &tri2d.v[1]) ? 0 : -1;
+  int bias0 = RB_is_top_left(&tri2d.v[1], &tri2d.v[2]) ? 0 : -1;
+  int bias1 = RB_is_top_left(&tri2d.v[2], &tri2d.v[0]) ? 0 : -1;
+  int bias2 = RB_is_top_left(&tri2d.v[0], &tri2d.v[1]) ? 0 : -1;
 
   // Compute the edge functions for the fist (top-left) point
   vec2i p0 = {x_min, y_min};
-  int w0_row = edge_cross(&tri2d.v[1], &tri2d.v[2], &p0) + bias0;
-  int w1_row = edge_cross(&tri2d.v[2], &tri2d.v[0], &p0) + bias1;
-  int w2_row = edge_cross(&tri2d.v[0], &tri2d.v[1], &p0) + bias2;
+  int w0_row = RB_edge_cross(&tri2d.v[1], &tri2d.v[2], &p0) + bias0;
+  int w1_row = RB_edge_cross(&tri2d.v[2], &tri2d.v[0], &p0) + bias1;
+  int w2_row = RB_edge_cross(&tri2d.v[0], &tri2d.v[1], &p0) + bias2;
 
   float area_inv = 1.0f / (w0_row + w1_row + w2_row);
 
@@ -270,7 +270,7 @@ void RB_fill_tri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color, int t
       if (is_inside)
       {
         float depth = (w0 * o0.z + w1 * o1.z + w2 * o2.z) * area_inv;
-        set_pixel(fb, x, y, color, depth);
+        RB_set_pixel(fb, x, y, color, depth);
       }
       w0 += delta_w0_col;
       w1 += delta_w1_col;
@@ -289,26 +289,26 @@ void RB_fill_tri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color, int t
 //   uint8_t blue = color & 0xFF;
 //   for (size_t i = 0; i < mesh.count; i++)
 //   {
-//     vec3 normal = vec3_normalize(vec3_cross(vec3_sub(mesh.tris[i].v[1], mesh.tris[i].v[0]), vec3_sub(mesh.tris[i].v[2], mesh.tris[i].v[0])));
-//     vec3 los = vec3_sub(mesh.tris[i].v[0], cam->eye);
-//     if (vec3_dot(los, normal) >= 0)
+//     vec3 normal = RB_vec3_normalize(RB_vec3_cross(RB_vec3_sub(mesh.tris[i].v[1], mesh.tris[i].v[0]), RB_vec3_sub(mesh.tris[i].v[2], mesh.tris[i].v[0])));
+//     vec3 los = RB_vec3_sub(mesh.tris[i].v[0], cam->eye);
+//     if (RB_vec3_dot(los, normal) >= 0)
 //       continue;
 
-//     vec3 face_centre = vec3_add(vec3_add(mesh.tris[i].v[0], mesh.tris[i].v[1]), mesh.tris[i].v[2]);
+//     vec3 face_centre = RB_vec3_add(RB_vec3_add(mesh.tris[i].v[0], mesh.tris[i].v[1]), mesh.tris[i].v[2]);
 
 //     face_centre.x /= 3;
 //     face_centre.y /= 3;
 //     face_centre.z /= 3;
 
-//     vec3 light_dir = vec3_sub(light, face_centre);
+//     vec3 light_dir = RB_vec3_sub(light, face_centre);
 
-//     float intensity = vec3_dot(normal, vec3_normalize(light_dir));
+//     float intensity = RB_vec3_dot(normal, RB_vec3_normalize(light_dir));
 //     intensity = (intensity < 0) ? 0.0f : intensity;
 //     RB_fill_tri3d(fb, cam, mesh.tris[i], rgb(red * intensity, green * intensity, blue * intensity), 0, fb->height - 1);
 //   }
 // }
 
-int render_worker(void *arg)
+int RB_render_worker(void *arg)
 {
   mt_mesh_args *args = arg;
 
@@ -318,23 +318,23 @@ int render_worker(void *arg)
     uint8_t red = (mesh->color >> 16) & 0xFF;
     uint8_t green = (mesh->color >> 8) & 0xFF;
     uint8_t blue = mesh->color & 0xFF;
-    mat4 view = update_view(args->cam);
+    mat4 view = RB_update_view(args->cam);
     for (size_t i = 0; i < mesh->count; i++)
     {
-      vec3 normal = vec3_normalize(vec3_cross(vec3_sub(mesh->tris[i].v[1], mesh->tris[i].v[0]), vec3_sub(mesh->tris[i].v[2], mesh->tris[i].v[0])));
-      vec3 los = vec3_sub(mesh->tris[i].v[0], args->cam->eye);
-      if (vec3_dot(los, normal) >= 0)
+      vec3 normal = RB_vec3_normalize(RB_vec3_cross(RB_vec3_sub(mesh->tris[i].v[1], mesh->tris[i].v[0]), RB_vec3_sub(mesh->tris[i].v[2], mesh->tris[i].v[0])));
+      vec3 los = RB_vec3_sub(mesh->tris[i].v[0], args->cam->eye);
+      if (RB_vec3_dot(los, normal) >= 0)
         continue;
 
-      vec3 face_centre = vec3_add(vec3_add(mesh->tris[i].v[0], mesh->tris[i].v[1]), mesh->tris[i].v[2]);
+      vec3 face_centre = RB_vec3_add(RB_vec3_add(mesh->tris[i].v[0], mesh->tris[i].v[1]), mesh->tris[i].v[2]);
 
       face_centre.x /= 3;
       face_centre.y /= 3;
       face_centre.z /= 3;
 
-      vec3 light_dir = vec3_sub(args->light, face_centre);
+      vec3 light_dir = RB_vec3_sub(args->light, face_centre);
 
-      float intensity = vec3_dot(normal, vec3_normalize(light_dir));
+      float intensity = RB_vec3_dot(normal, RB_vec3_normalize(light_dir));
       intensity = (intensity < 0) ? 0.0f : intensity;
 
       RB_fill_tri3d(

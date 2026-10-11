@@ -14,7 +14,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 LARGE_INTEGER ticksPerSecond, lastTickCount, currentTickCount;
 
-uint64_t get_delta_time()
+uint64_t RB_get_delta_time()
 {
   QueryPerformanceCounter(&currentTickCount);
   uint64_t elapsedTicks = currentTickCount.QuadPart - lastTickCount.QuadPart;
@@ -24,7 +24,7 @@ uint64_t get_delta_time()
   return elapsedTimeInMicroseconds;
 }
 
-bool is_running()
+bool RB_is_running()
 {
   MSG msg;
   while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -38,7 +38,7 @@ bool is_running()
 }
 HWND hwnd;
 HDC memDC;
-void draw_frame()
+void RB_draw_frame()
 {
   HDC hdc = GetDC(hwnd);
   BitBlt(hdc, 0, 0, fb.width, fb.height, memDC, 0, 0, SRCCOPY);
@@ -67,7 +67,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 {
   // model m;
 
-  init_framebuffer(&fb);
+  RB_init_framebuffer(&fb);
   const wchar_t CLASS_NAME[] = L"Sample Window Class";
 
   WNDCLASS wc = {0};

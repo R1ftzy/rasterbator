@@ -5,7 +5,9 @@
 #include "types.h"
 #include "config.h"
 
-void set_pixel(framebuffer *fb, int x, int y, uint32_t color, float depth)
+framebuffer fb;
+
+void RB_set_pixel(framebuffer *fb, int x, int y, uint32_t color, float depth)
 {
   if (x >= 0 && x < fb->width && y >= 0 && y < fb->height)
   {
@@ -16,14 +18,14 @@ void set_pixel(framebuffer *fb, int x, int y, uint32_t color, float depth)
     }
   }
 }
-void clear_depth(framebuffer *fb)
+void RB_clear_depth(framebuffer *fb)
 {
   for (int i = 0; i < fb->width * fb->height; i++)
   {
     fb->depth[i] = 1.0f;
   }
 }
-void clear_framebuffer(framebuffer *fb, uint32_t color)
+void RB_clear_framebuffer(framebuffer *fb, uint32_t color)
 {
   for (int i = 0; i < fb->width * fb->height; i++)
   {
@@ -31,7 +33,7 @@ void clear_framebuffer(framebuffer *fb, uint32_t color)
     fb->depth[i] = 1.0f;
   }
 }
-void init_framebuffer(framebuffer *fb)
+void RB_init_framebuffer(framebuffer *fb)
 {
   fb->width = SCREEN_WIDTH;
   fb->height = SCREEN_HEIGHT;
@@ -39,10 +41,10 @@ void init_framebuffer(framebuffer *fb)
   // memset(fb->pixels, 0, fb->width * fb->height * sizeof(uint32_t));
   fb->pixels = NULL;
   fb->depth = malloc(fb->width * fb->height * sizeof(float));
-  clear_depth(fb);
+  RB_clear_depth(fb);
 }
 
-void render_image(framebuffer *fb)
+void RB_render_image(framebuffer *fb)
 {
   FILE *fp = fopen("image.ppm", "wb");
   fprintf(fp, "P6\n%d %d\n255\n", fb->width, fb->height);
@@ -57,7 +59,7 @@ void render_image(framebuffer *fb)
   fclose(fp);
 }
 
-void render_image_depth(framebuffer *fb)
+void RB_render_image_depth(framebuffer *fb)
 {
   FILE *fp = fopen("depth.ppm", "wb");
   fprintf(fp, "P6\n%d %d\n255\n", fb->width, fb->height);

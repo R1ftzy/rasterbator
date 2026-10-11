@@ -27,9 +27,9 @@ typedef struct
   float dt;
 } scene;
 
-void init(scene *m)
+void RB_init(scene *m)
 {
-  init_cam(&m->cam);
+  RB_init_cam(&m->cam);
   m->cam.eye = (vec3){4.0f, 0, 7};
   m->cam.target = (vec3){0, -1.0, 0};
   m->light = (vec3){2.0f, 0.5f, 8.0f};
@@ -41,20 +41,20 @@ void init(scene *m)
   memcpy(m->base.tris, tris, sizeof(tris));
   m->base.count = sizeof(tris) / sizeof(tris[0]);
   m->base.color = rgb(38, 48, 43);
-  parse_obj("assets/Koenigsegg.obj", &m->suzanne);
-  parse_obj("assets/icosphere.obj", &m->sphere);
+  RB_parse_obj("assets/Koenigsegg.obj", &m->suzanne);
+  RB_parse_obj("assets/icosphere.obj", &m->sphere);
   m->sphere.color = rgb(233, 234, 172);
   m->suzanne.color = rgb(239, 250, 251);
-  translate_mesh3(&m->suzanne, 1.0, -0.9f, 1.0);
-  rotate_mesh3_euler(&m->suzanne, 90, 0, 0);
-  scale_mesh3(&m->sphere, 0.2, 0.2, 0.2);
-  scale_mesh3(&m->suzanne, 0.7, 0.7, 0.7);
-  translate_mesh3(&m->sphere, m->light.x, m->light.y, m->light.z);
+  RB_translate_mesh3(&m->suzanne, 1.0, -0.9f, 1.0);
+  RB_rotate_mesh3_euler(&m->suzanne, 90, 0, 0);
+  RB_scale_mesh3(&m->sphere, 0.2, 0.2, 0.2);
+  RB_scale_mesh3(&m->suzanne, 0.7, 0.7, 0.7);
+  RB_translate_mesh3(&m->sphere, m->light.x, m->light.y, m->light.z);
   m->dt = 0;
   m->speed = 0.0;
 }
 
-void update(scene *m)
+void RB_update(scene *m)
 {
   m->speed += 1.2 * m->dt;
   float r = 4.0f;
@@ -62,13 +62,13 @@ void update(scene *m)
 
   // vec3 prev_light = m->light;
   m->light = (vec3){r * cosf(2 * m->speed), 0.2, r * sinf(2 * m->speed)};
-  // translate_mesh3(&m->sphere, m->light.x - prev_light.x, m->light.y - prev_light.y, m->light.z - prev_light.z);
-  rotate_mesh3_euler(&m->sphere, 0.0f, 15 * m->dt, 0.0f);
-  clear_framebuffer(&fb, rgb(183, 183, 183));
-  // rotate_mesh3_euler(&m->suzanne, 0, 60 * m->dt, 0);
+  // RB_translate_mesh3(&m->sphere, m->light.x - prev_light.x, m->light.y - prev_light.y, m->light.z - prev_light.z);
+  RB_rotate_mesh3_euler(&m->sphere, 0.0f, 15 * m->dt, 0.0f);
+  RB_clear_framebuffer(&fb, rgb(183, 183, 183));
+  // RB_rotate_mesh3_euler(&m->suzanne, 0, 60 * m->dt, 0);
   float prev_sin = sinf(m->speed - 2 * m->dt);
   float curr_sin = sinf(m->speed);
-  // translate_mesh3(&m->suzanne, 0, 0, 0.5 * (curr_sin - prev_sin));
+  // RB_translate_mesh3(&m->suzanne, 0, 0, 0.5 * (curr_sin - prev_sin));
 
   // RB_draw_mesh3d(&fb, &m->cam, m->base, m->light, rgb(38, 48, 43));
   // RB_draw_mesh3d(&fb, &m->cam, m->suzanne, m->light, rgb(239, 250, 251));
@@ -82,7 +82,7 @@ void update(scene *m)
   int mesh_count = sizeof(meshes) / sizeof(meshes[0]);
 
   render_pool pool;
-  rb_pool_render(&pool, &fb, &m->cam, meshes, mesh_count, m->light);
+  RB_pool_render(&pool, &fb, &m->cam, meshes, mesh_count, m->light);
 }
 
 int main()
@@ -91,19 +91,19 @@ int main()
   RB_create_window();
   int frame_count = 0;
   float min_fps = 10000.0f;
-  init(&m);
+  RB_init(&m);
   // Game loop
-  while (is_running())
+  while (RB_is_running())
   {
-    update(&m);
+    RB_update(&m);
 
     // framebuffer to window
-    draw_frame();
+    RB_draw_frame();
 
     // Evaluate Delta Time
     {
       // Time in milliseconds
-      m.dt = (float)get_delta_time() / 1000.0f;
+      m.dt = (float)RB_get_delta_time() / 1000.0f;
       // Time in seconds
       m.dt /= 1000.0f;
     }

@@ -1,29 +1,29 @@
 #include "types.h"
 #include <math.h>
 
-vec3 vec3_add(vec3 A, vec3 B)
+vec3 RB_vec3_add(vec3 A, vec3 B)
 {
   return (vec3){A.x + B.x, A.y + B.y, A.z + B.z};
 }
 
-vec3 vec3_sub(vec3 A, vec3 B)
+vec3 RB_vec3_sub(vec3 A, vec3 B)
 {
   return (vec3){A.x - B.x, A.y - B.y, A.z - B.z};
 }
 
-float vec3_dot(vec3 A, vec3 B)
+float RB_vec3_dot(vec3 A, vec3 B)
 {
   return A.x * B.x + A.y * B.y + A.z * B.z;
 }
 
-vec3 vec3_projected(vec3 A, vec3 B){
+vec3 RB_vec3_projected(vec3 A, vec3 B){
   // projection of vector B on vector A
-  float inv_mag = 1 / vec3_dot(A,A);
-  float dot = vec3_dot(A,B);
+  float inv_mag = 1 / RB_vec3_dot(A,A);
+  float dot = RB_vec3_dot(A,B);
   return (vec3){A.x * dot * inv_mag, A.y * dot * inv_mag, A.z * dot * inv_mag};
 }
 
-vec3 vec3_cross(vec3 A, vec3 B)
+vec3 RB_vec3_cross(vec3 A, vec3 B)
 {
   return (vec3){
       A.y * B.z - A.z * B.y,
@@ -31,7 +31,7 @@ vec3 vec3_cross(vec3 A, vec3 B)
       A.x * B.y - A.y * B.x};
 }
 
-vec3 vec3_normalize(vec3 v)
+vec3 RB_vec3_normalize(vec3 v)
 {
   float mag = sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
   if (mag == 0)
@@ -40,7 +40,7 @@ vec3 vec3_normalize(vec3 v)
   return n;
 }
 
-vec4 mat4_mul_vec4(mat4 m, vec4 v)
+vec4 RB_mat4_mul_vec4(mat4 m, vec4 v)
 {
   vec4 o;
   o.x = v.x * m.m[0][0] + v.y * m.m[0][1] + v.z * m.m[0][2] + v.w * m.m[0][3];
@@ -50,7 +50,7 @@ vec4 mat4_mul_vec4(mat4 m, vec4 v)
   return o;
 }
 
-mat4 mat4_mul_mat4(mat4 m, mat4 B)
+mat4 RB_mat4_mul_mat4(mat4 m, mat4 B)
 {
   mat4 o;
   o.m[0][0] = m.m[0][0] * B.m[0][0] + m.m[0][1] * B.m[1][0] + m.m[0][2] * B.m[2][0] + m.m[0][3] * B.m[3][0];

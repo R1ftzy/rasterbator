@@ -3,7 +3,7 @@
 #include <math.h>
 #include <stdio.h>
 
-void applyTransformation(mesh3 *mesh, mat4 mat)
+void RB_applyTransformation(mesh3 *mesh, mat4 mat)
 {
   for (size_t i = 0; i < mesh->count; i++)
   {
@@ -11,9 +11,9 @@ void applyTransformation(mesh3 *mesh, mat4 mat)
     vec4 v1 = VEC3_TO_VEC4(mesh->tris[i].v[1]);
     vec4 v2 = VEC3_TO_VEC4(mesh->tris[i].v[2]);
 
-    vec4 o0 = mat4_mul_vec4(mat, v0);
-    vec4 o1 = mat4_mul_vec4(mat, v1);
-    vec4 o2 = mat4_mul_vec4(mat, v2);
+    vec4 o0 = RB_mat4_mul_vec4(mat, v0);
+    vec4 o1 = RB_mat4_mul_vec4(mat, v1);
+    vec4 o2 = RB_mat4_mul_vec4(mat, v2);
 
     vec3 t0 = {o0.x, o0.y, o0.z};
     vec3 t1 = {o1.x, o1.y, o1.z};
@@ -23,12 +23,12 @@ void applyTransformation(mesh3 *mesh, mat4 mat)
   }
 }
 
-vec3 get_centroid(mesh3 *mesh)
+vec3 RB_get_centroid(mesh3 *mesh)
 {
   vec3 centroid = {0};
   for (size_t i = 0; i < mesh->count; i++)
   {
-    centroid = vec3_add(centroid, vec3_add(vec3_add(mesh->tris[i].v[0], mesh->tris[i].v[1]), mesh->tris[i].v[2]));
+    centroid = RB_vec3_add(centroid, RB_vec3_add(RB_vec3_add(mesh->tris[i].v[0], mesh->tris[i].v[1]), mesh->tris[i].v[2]));
   }
   centroid.x /= 3 * mesh->count;
   centroid.y /= 3 * mesh->count;
@@ -37,7 +37,7 @@ vec3 get_centroid(mesh3 *mesh)
   return centroid;
 }
 
-void translate_mesh3(mesh3 *mesh, float x_translate, float y_translate, float z_translate)
+void RB_translate_mesh3(mesh3 *mesh, float x_translate, float y_translate, float z_translate)
 {
   mat4 matMove = {0};
   matMove.m[0][0] = 1;
@@ -48,13 +48,13 @@ void translate_mesh3(mesh3 *mesh, float x_translate, float y_translate, float z_
   matMove.m[2][3] = z_translate;
   matMove.m[3][3] = 1;
 
-  applyTransformation(mesh, matMove);
+  RB_applyTransformation(mesh, matMove);
 }
 
-void rotate_mesh3_quat(mesh3 *mesh, float w, float x, float y, float z)
+void RB_rotate_mesh3_quat(mesh3 *mesh, float w, float x, float y, float z)
 {
-  vec3 centroid = get_centroid(mesh);
-  translate_mesh3(mesh, -centroid.x, -centroid.y, -centroid.z);
+  vec3 centroid = RB_get_centroid(mesh);
+  RB_translate_mesh3(mesh, -centroid.x, -centroid.y, -centroid.z);
   mat4 matRot = {0};
   matRot.m[0][0] = 1 - 2 * (y * y + z * z);
   matRot.m[0][1] = 2 * (x * y - w * z);
@@ -68,12 +68,12 @@ void rotate_mesh3_quat(mesh3 *mesh, float w, float x, float y, float z)
   matRot.m[2][0] = 2 * (x * z - w * y);
   matRot.m[2][1] = 2 * (y * z + w * x);
 
-  applyTransformation(mesh, matRot);
+  RB_applyTransformation(mesh, matRot);
 
-  translate_mesh3(mesh, centroid.x, centroid.y, centroid.z);
+  RB_translate_mesh3(mesh, centroid.x, centroid.y, centroid.z);
 }
 
-void rotate_mesh3_euler(mesh3 *mesh, float attitude, float heading, float bank)
+void RB_rotate_mesh3_euler(mesh3 *mesh, float attitude, float heading, float bank)
 {
   float c1 = cosf(DEG_TO_RAD(heading) / 2);
   float c2 = cosf(DEG_TO_RAD(bank) / 2);
@@ -86,15 +86,15 @@ void rotate_mesh3_euler(mesh3 *mesh, float attitude, float heading, float bank)
   q.x = c1 * c2 * s3 + s1 * s2 * c3;
   q.y = s1 * c2 * c3 + c1 * s2 * s3;
   q.z = c1 * s2 * c3 - s1 * c2 * s3;
-  rotate_mesh3_quat(mesh, q.w, q.x, q.y, q.z);
+  RB_rotate_mesh3_quat(mesh, q.w, q.x, q.y, q.z);
 }
 
-void scale_mesh3(mesh3 *mesh, float x_scale, float y_scale, float z_scale)
+void RB_scale_mesh3(mesh3 *mesh, float x_scale, float y_scale, float z_scale)
 {
   mat4 matScale = {0};
   matScale.m[0][0] = x_scale;
   matScale.m[1][1] = y_scale;
   matScale.m[2][2] = z_scale;
   matScale.m[3][3] = 1;
-  applyTransformation(mesh, matScale);
+  RB_applyTransformation(mesh, matScale);
 }

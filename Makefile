@@ -1,11 +1,12 @@
 CC       = gcc
 TARGET   = raster
 
-SRC      = src/main.c src/framebuffer.c src/draw.c src/color.c src/vecmath.c src/camera.c src/obj.c src/trans.c src/thread_pool.c
+SRC      = src/framebuffer.c src/draw.c src/color.c src/vecmath.c src/camera.c src/obj.c src/trans.c src/thread_pool.c
+TEST_SRC = tests/cartest.c
 DEBUG_FLAGS  = -O0 -g -Wall -Wextra -Iinclude
 RELEASE_FLAGS = -O3 -march=native -Iinclude
-WIN_SRC  = $(SRC) src/RB_windows.c
-SDL_SRC  = $(SRC) src/RB_sdl.c
+WIN_SRC  = $(SRC) $(TEST_SRC) src/RB_windows.c
+SDL_SRC  = $(SRC) $(TEST_SRC) src/RB_sdl.c
 WIN_LDFLAGS = -mwindows -municode -lgdi32 -luser32
 
 SDL_CFLAGS  = -Iinclude -Iexternal/SDL3/include

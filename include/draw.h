@@ -16,7 +16,7 @@ void RB_fill_tri3d(framebuffer *fb, camera *cam, tri3 tri, uint32_t color, int t
 
 // void RB_draw_mesh3d(framebuffer *fb, camera *cam, mesh3 mesh, vec3 light, uint32_t color);
 
-int render_worker(void *arg);
+int RB_render_worker(void *arg);
 
 typedef struct {
     framebuffer *fb;
