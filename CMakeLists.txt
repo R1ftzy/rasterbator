@@ -32,7 +32,7 @@ if(NOT EXISTS "${SDL3_ROOT}/include/SDL3/SDL.h")
   set(_sdl_src "${CMAKE_BINARY_DIR}/_deps/sdl-src")
   set(_sdl_bld "${CMAKE_BINARY_DIR}/_deps/sdl-build")
 
-  execute_process(COMMAND git clone --depth 1 --branch release-3.2.10
+  execute_process(COMMAND git clone --depth 1 --branch release-3.4.14
                           https://github.com/libsdl-org/SDL.git "${_sdl_src}"
                   RESULT_VARIABLE _rc)
   if(NOT _rc EQUAL 0)
