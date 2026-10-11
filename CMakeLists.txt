@@ -70,6 +70,33 @@ if(NOT SDL3_FOUND)
   if(WIN32)
     if(MINGW)
       set(_sdl_implib "${SDL3_ROOT}/lib/libSDL3.dll.a")
+      if(NOT EXISTS "${_sdl_implib}" AND EXISTS "${SDL3_ROOT}/bin/SDL3.dll")
+        find_program(_rb_gendef NAMES gendef)
+        find_program(_rb_dlltool NAMES dlltool llvm-dlltool)
+        if(NOT _rb_gendef OR NOT _rb_dlltool)
+          message(FATAL_ERROR
+            "MinGW requires libSDL3.dll.a, or gendef and dlltool must be available "
+            "to generate it from ${SDL3_ROOT}/bin/SDL3.dll")
+        endif()
+
+        set(_sdl_def "${CMAKE_BINARY_DIR}/_deps/SDL3.def")
+        file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/_deps")
+        execute_process(
+          COMMAND "${_rb_gendef}" - "${SDL3_ROOT}/bin/SDL3.dll"
+          OUTPUT_FILE "${_sdl_def}"
+          RESULT_VARIABLE _rc)
+        if(NOT _rc EQUAL 0)
+          message(FATAL_ERROR "Failed to extract SDL3 exports (${_rc})")
+        endif()
+
+        execute_process(
+          COMMAND "${_rb_dlltool}" -d "${_sdl_def}" -D SDL3.dll -l "${_sdl_implib}"
+          RESULT_VARIABLE _rc)
+        if(NOT _rc EQUAL 0)
+          message(FATAL_ERROR "Failed to generate ${_sdl_implib} (${_rc})")
+        endif()
+        message(STATUS "Generated MinGW SDL3 import library: ${_sdl_implib}")
+      endif()
     else()
       set(_sdl_implib "${SDL3_ROOT}/lib/SDL3.lib")
     endif()
