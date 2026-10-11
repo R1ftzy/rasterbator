@@ -8,53 +8,55 @@ can draw 3D shi onto a 2D screen in real time!
 
 ## Build
 
-> [!IMPORTANT]
-> MSYS2 required on Windows.
+Build the builtin car test using cmake wrapped with make.
 
-Two platform layers are available: Win32 (default, no extra files!) and SDL3 (cross-platform, requires SDL3).
+Two window backends are available:
 
-### Win32
-
-> [!IMPORTANT]
-> CURRENTLY BROKEN
-
-```sh
-make win         # optimized
-make debug    # debug symbols
-```
-
-### SDL
-
-Requires SDL ofc. but you need to drop the files in manually:
-
-1. Download the SDL3 libraries from the [SDL releases page](https://github.com/libsdl-org/SDL/releases)
-2. Extract into `external/SDL3/`:
-
-```
-   external/SDL3/
-   ├── include/
-   │   └── SDL3/
-   └── lib/
-       └── ...
-```
-
-3. to build
+- **SDL3** (Defaul and auto installed when running make)
 
 ```sh
 make
 ```
 
-## Usage
+- **Win32**:
 
 ```sh
-./bin/raster
+make win
 ```
 
-Ts (this) opens a window with real-time rendering.
+Targets and knobs:
+
+```sh
+make debug                 # debug symbols
+make run                   # release, then run
+make clean                 # remove build dirs + binaries
+
+make BACKEND=win32         # backend for release/debug: sdl (default) | win32
+make SHARED=ON             # build rasterbator as a shared library
+make EXAMPLES=OFF          # build the library only, no cartest
+make WIN32_ENTRY=OFF       # don't compile wWinMain into the win32 backend
+make BUILD=build-clang CC=clang
+```
+
+> [!IMPORTANT]
+> Windows builds default to the MinGW/clang toolchain (override with `CC=...`
+> and `GEN=...`). The MSVC build currently crashes at runtime with heap
+> corruption (`0xC0000374`) — stick to MinGW/clang.
+
+## Test
+
+Run the builtin car test.
+
+```sh
+./bin/cartest
+```
+
+Ts (this) opens a window with real-time rendering. Assets are resolved relative
+to the executable, so run it from the repo root.
 
 > [!TIP]
 > Directly use ts if you don't hate yourself.
 >
 > ```sh
-> make && ./bin/raster
+> make && ./bin/cartest
 > ```
