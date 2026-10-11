@@ -1,33 +1,79 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "types.h"
 #include <string.h>
+#include "types.h"
 
 #ifdef _WIN32
 #include <windows.h>
 
 #elif defined(__linux__)
-#define MAX_PATH 260
 #include <unistd.h>
 
 #elif defined(__APPLE__)
-#define MAX_PATH 260
 #include <mach-o/dyld.h>
 #endif
 
+enum
+{
+  EXE_PATH_MAX = 1024
+};
+
 void RB_parse_obj(const char *filename, mesh3 *mesh)
 {
-  char path[MAX_PATH];
+  char path[EXE_PATH_MAX];
+  char full[EXE_PATH_MAX];
+  const char *sep = NULL;
+
 #ifdef _WIN32
-  GetModuleFileNameA(NULL, path, MAX_PATH);
+  if (GetModuleFileNameA(NULL, path, (DWORD)sizeof(path)) == 0)
+  {
+    mesh->count = 0;
+    mesh->tris = NULL;
+    return;
+  }
 #elif defined(__linux__)
-  readlink("/proc/self/exe", path, MAX_PATH);
+  ssize_t len = readlink("/proc/self/exe", path, sizeof(path) - 1);
+  if (len < 0)
+  {
+    mesh->count = 0;
+    mesh->tris = NULL;
+    return;
+  }
+  path[len] = '\0';
 #elif defined(__APPLE__)
-// _NSGetExecutablePath(path, MAX_PATH);
+  uint32_t size = (uint32_t)sizeof(path);
+  if (_NSGetExecutablePath(path, &size) != 0)
+  {
+    mesh->count = 0;
+    mesh->tris = NULL;
+    return;
+  }
 #endif
-  *strrchr(path, '\\') = '\0';
-  snprintf(path, MAX_PATH, "%s\\..\\%s", path, filename);
-  FILE *fp = fopen(path, "r");
+  path[sizeof(path) - 1] = '\0';
+
+  sep = strrchr(path, '/');
+  {
+    char *bs = strrchr(path, '\\');
+    if (bs > sep)
+      sep = bs;
+  }
+  if (!sep)
+  {
+    mesh->count = 0;
+    mesh->tris = NULL;
+    return;
+  }
+  *((char *)sep) = '\0';
+
+  snprintf(full, sizeof(full), "%s/../%s", path, filename);
+
+  FILE *fp = fopen(full, "r");
+  if (!fp)
+  {
+    mesh->count = 0;
+    mesh->tris = NULL;
+    return;
+  }
   size_t v_capacity = 0;
   size_t t_capacity = 0;
   vec3 *vertices = NULL;
